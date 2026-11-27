@@ -1,0 +1,295 @@
+@model ECommerce.Module.Catalog.Areas.Catalog.ViewModels.ProductDetail
+
+@{
+    ViewBag.Title = Model.MetaTitle ?? Model.Name;
+}
+
+@section additionalMeta {
+    <meta name="title" content="@ViewBag.Title" />
+    <meta name="keywords" content="@Model.MetaKeywords" />
+    <meta name="description" content="@Model.MetaDescription" />
+}
+
+@section head
+{
+    <link simpl-append-version="true" rel="stylesheet" href="~/lib/smoothproducts/css/smoothproducts.css" />
+    <link simpl-append-version="true" rel="stylesheet" href="~/_content/ECommerce.Module.Catalog/product-detail.css" />
+}
+
+<div class="invenzo-breadcrumb">
+    <a href="~/">
+        @Localizer["Home"]
+        <i class="fa fa-angle-right" aria-hidden="true"></i>
+    </a>
+    @if (Model.Categories.Any())
+    {
+        @await Component.InvokeAsync("CategoryBreadcrumb", new { categoryIds = Model.Categories.Select(x => x.Id) })
+    }
+
+    <span>@Model.Name</span>
+</div>
+
+<div class="product-detail invenzo-product-page">
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <div id="main-product-images" class="product-images invenzo-product-gallery">
+                <div class="sp-wrap">
+                    @foreach (var image in Model.Images)
+                    {
+                        <a href="@image.Url">
+                            <img src="@image.ThumbnailUrl" alt="" />
+                        </a>
+                    }
+                </div>
+            </div>
+            @foreach (var variant in Model.Variations)
+            {
+                if (variant.Images.Any())
+                {
+                    <div class="product-images" data-images-variation-name="@variant.NormalizedName" style="display:none;">
+                        <div class="sp-wrap">
+                            @foreach (var image in variant.Images)
+                            {
+                                <a href="@image.Url">
+                                    <img src="@image.ThumbnailUrl" alt="" />
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+        <div class="col-lg-6 mb-4">
+            <div class="invenzo-product-summary">
+                <div class="product-name invenzo-product-name">
+                    <span class="invenzo-section-eyebrow">@Localizer["Product spotlight"]</span>
+                    <h1>@Model.Name</h1>
+                </div>
+                <ul class="list-inline product-ratings invenzo-inline-rating">
+                    <li><input type="hidden" value="@Model.RatingAverage" readonly="readonly" class="rating-loading" step="1" data-size="xs" data-show-clear="false" data-show-caption="false" /></li>
+                    <li class="product-review-list">
+                        <span>(@Model.ReviewsCount) <a href="#reviews">@Localizer["reviews"]</a> | <a href="#addreview">@Localizer["Add Review"]</a></span>
+                    </li>
+                </ul>
+                <div class="product-short-desc invenzo-product-brief">@Html.Raw(Model.ShortDescription)</div>
+
+                @if (Model.HasVariation)
+                {
+                    <form class="invenzo-option-form">
+                        <div class="product-attrs">
+                            @foreach (var option in Model.AvailableOptions)
+                            {
+                                <div class="invenzo-option-group">
+                                    <h5>@option.OptionName</h5>
+                                    <ul class="list-inline product-attr-options invenzo-option-list">
+                                        @foreach (var value in option.Values)
+                                        {
+                                            var shouldChecked = Model.Variations.First().Options.Any(x => x.Value == value);
+                                            <li class="list-inline-item">
+                                                <input type="radio" value="@value" checked="@shouldChecked" name="@option.OptionName" />
+                                                @if (Model.OptionDisplayValues.ContainsKey(value) && !String.IsNullOrWhiteSpace(Model.OptionDisplayValues[value].Value))
+                                                {
+                                                    if (Model.OptionDisplayValues[value].DisplayType == "color")
+                                                    {
+                                                        <label title="@value" class="color" style="background-color:@Model.OptionDisplayValues[value].Value"></label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <label class="badge invenzo-option-badge">@Model.OptionDisplayValues[value].Value</label>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <label class="badge invenzo-option-badge">@value</label>
+                                                }
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            }
+                        </div>
+                    </form>
+
+                    foreach (var variant in Model.Variations)
+                    {
+                        var hidden = variant != Model.Variations.First() ? "collapse" : "";
+                        <div class="product-variation invenzo-price-panel @hidden" data-variation-name="@variant.NormalizedName">
+                            <div class="product-price">
+                                @if (variant.IsCallForPricing)
+                                {
+                                    <span class="label label-info">@Localizer["Call for pricing"]</span>
+                                }
+                                else
+                                {
+                                    <h3>@variant.CalculatedProductPrice.PriceString</h3>
+                                    if (variant.CalculatedProductPrice.PercentOfSaving > 0)
+                                    {
+                                        <p class="product-price-regular">@variant.CalculatedProductPrice.OldPriceString</p>
+                                        <p class="product-price-saving">@Localizer["You save"] (@(variant.CalculatedProductPrice.PercentOfSaving)%)</p>
+                                    }
+                                }
+                            </div>
+                            @if (variant.StockTrackingIsEnabled && variant.StockQuantity <= 0)
+                            {
+                                <div class="out-of-stock invenzo-stock-state">
+                                    <span class="label label-danger">@Localizer["Out of stock"]</span>
+                                </div>
+                            }
+                            <div class="add-to-cart invenzo-purchase-box">
+                                <form class="inline">
+                                    <input type="hidden" name="productId" value="@variant.Id" />
+                                    <div class="product-quantity">
+                                        <button type="button" class="quantity-button" name="subtract" value="-">-</button>
+                                        <input type="text" class="quantity-field" readonly="readonly" name="qty" value="1">
+                                        <button type="button" class="quantity-button" name="add" value="+">+</button>
+                                    </div>
+                                    <button type="button" disabled="@(!variant.IsAllowToOrder || (variant.StockTrackingIsEnabled && variant.StockQuantity <= 0))" class="btn btn-lg btn-add-cart invenzo-primary-button">@Localizer["Add to cart"]</button>
+                                    <div>
+                                        <ul class="list-inline add-to-wishlist">
+                                            <li class="compare-in">
+                                                <i class="fa fa-exchange"></i>
+                                                <a href="#" class="add-to-comparison invenzo-secondary-link">@Localizer["Add to Compare"]</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                    <div class="product-variation-notavailable collapse invenzo-stock-state">
+                        <span class="label label-danger">@Localizer["Not available"]</span>
+                    </div>
+                }
+                else
+                {
+                    <div class="invenzo-price-panel">
+                        <div class="product-price">
+                            @if (Model.IsCallForPricing)
+                            {
+                                <span class="label label-info">@Localizer["Call for pricing"]</span>
+                            }
+                            else
+                            {
+                                <h3>@Model.CalculatedProductPrice.PriceString</h3>
+                                if (Model.CalculatedProductPrice.PercentOfSaving > 0)
+                                {
+                                    <p class="product-price-regular">@Model.CalculatedProductPrice.OldPriceString</p>
+                                    <p class="product-price-saving">@Localizer["You save"] (@(Model.CalculatedProductPrice.PercentOfSaving)%)</p>
+                                }
+                            }
+                        </div>
+                        @if (Model.StockTrackingIsEnabled && Model.StockQuantity <= 0)
+                        {
+                            <div class="out-of-stock invenzo-stock-state">
+                                <span class="label label-danger">@Localizer["Out of stock"]</span>
+                            </div>
+                        }
+                        <div class="add-to-cart invenzo-purchase-box">
+                            <form class="inline">
+                                <input type="hidden" name="productId" value="@Model.Id" />
+                                <div class="product-quantity">
+                                    <button type="button" class="quantity-button" name="subtract" value="-">-</button>
+                                    <input type="text" class="quantity-field" readonly="readonly" name="qty" value="1">
+                                    <button type="button" class="quantity-button" name="add" value="+">+</button>
+                                </div>
+                                <button type="button" disabled="@(!Model.IsAllowToOrder || (Model.StockTrackingIsEnabled && Model.StockQuantity <= 0))" class="btn btn-lg btn-add-cart invenzo-primary-button">@Localizer["Add to cart"]</button>
+                                <div>
+                                    <ul class="list-inline add-to-wishlist">
+                                        <li class="compare-in">
+                                            <i class="fa fa-exchange"></i>
+                                            <a href="#" class="add-to-comparison invenzo-secondary-link">@Localizer["Add to Compare"]</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    @if (!string.IsNullOrWhiteSpace(Model.Description))
+    {
+        <div class="invenzo-detail-section">
+            <h3>@Localizer["Product detail"]</h3>
+            @Html.Raw(Model.Description)
+        </div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(Model.Specification))
+    {
+        <div class="invenzo-detail-section">
+            <h3>@Localizer["Product specification"]</h3>
+            @Html.Raw(Model.Specification)
+        </div>
+    }
+    @if (Model.Attributes.Any())
+    {
+        <div class="invenzo-detail-section">
+            <h3>@Localizer["Product specification"]</h3>
+            <table class="table table-striped">
+                @foreach (var attr in Model.Attributes)
+                {
+                    <tr>
+                        <td>@attr.Name</td>
+                        <td>@attr.Value</td>
+                    </tr>
+                }
+            </table>
+        </div>
+    }
+</div>
+
+@if (Model.RelatedProducts.Any())
+{
+    <section class="invenzo-section invenzo-related-section">
+        <div class="invenzo-section-heading">
+            <span class="invenzo-section-eyebrow">@Localizer["Recommended"]</span>
+            <h3>@Localizer["Enjoy and see also"]</h3>
+        </div>
+        <div class="row product-list invenzo-product-grid">
+            @foreach (var product in Model.RelatedProducts)
+            {
+                <div class="col-sm-6 col-lg-4 col-xl-3 mb-4">
+                    <partial name="_ProductThumbnail" model="product" />
+                </div>
+            }
+        </div>
+    </section>
+}
+
+@if (Model.CrossSellProducts.Any())
+{
+    <section class="invenzo-section invenzo-related-section">
+        <div class="invenzo-section-heading">
+            <span class="invenzo-section-eyebrow">@Localizer["Pairs well with"]</span>
+            <h3>@Localizer["Enjoy and take also"]</h3>
+        </div>
+        <div class="row product-list invenzo-product-grid">
+            @foreach (var product in Model.CrossSellProducts)
+            {
+                <div class="col-sm-6 col-lg-4 col-xl-3 mb-4">
+                    <partial name="_ProductThumbnail" model="product" />
+                </div>
+            }
+        </div>
+    </section>
+}
+
+@await Component.InvokeAsync("ProductRecentlyViewed", new { productId = Model.Id })
+
+<div class="invenzo-detail-section" id="reviews">
+    <h3>@Localizer["Customer reviews"]</h3>
+    @await Component.InvokeAsync("Review", new { entityId = Model.Id, entityTypeId = "Product" })
+</div>
+
+<div class="invenzo-detail-section" id="addreview">
+    <h3>@Localizer["Customer comments"]</h3>
+    @await Component.InvokeAsync("Comment", new { entityId = Model.Id, entityTypeId = "Product" })
+</div>
+
+@section scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script simpl-append-version="true" src="~/lib/smoothproducts/js/smoothproducts.js"></script>
+    <script simpl-append-version="true" src="~/_content/ECommerce.Module.Catalog/product-detail.js"></script>
+}

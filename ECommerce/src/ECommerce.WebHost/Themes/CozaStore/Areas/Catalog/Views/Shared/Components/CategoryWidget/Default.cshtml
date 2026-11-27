@@ -1,0 +1,17 @@
+@model ECommerce.Module.Catalog.Areas.Catalog.ViewModels.CategoryWidgetComponentVm
+
+<section class="invenzo-section">
+    <div class="invenzo-section-heading">
+        <span class="invenzo-section-eyebrow">@Localizer["Explore more"]</span>
+        <h2>@Model.WidgetName</h2>
+    </div>
+    <a href="~/@Model.Category.Slug" class="invenzo-category-card">
+        <span class="invenzo-category-media">
+            <img alt="@Model.Category.Name" src="@Model.Category.ThumbnailUrl">
+        </span>
+        <span class="invenzo-category-copy">
+            <strong>@Model.Category.Name</strong>
+            <span>@Localizer["Discover this collection"]</span>
+        </span>
+    </a>
+</section>

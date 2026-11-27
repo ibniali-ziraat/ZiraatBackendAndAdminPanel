@@ -1,0 +1,36 @@
+{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:49209",
+      "sslPort": 44388
+    }
+  },
+  "profiles": {
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "admin/login",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "ECommerce.WebHost": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "applicationUrl": "http://localhost:49208",
+      "launchUrl": "admin/login",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+  /*Backend app: http://localhost:49208
+    Admin UI: http://localhost:49208/admin
+    Admin login: http://localhost:49208/admin/login
+    Swagger UI: http://localhost:49208/swagger
+    Swagger JSON: http://localhost:49208/swagger/v1/swagger.json
+    API base URL: http://localhost:49208/api
+  */
+}

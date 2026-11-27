@@ -1,0 +1,118 @@
+using ECommerce.Infrastructure.Data;
+using ECommerce.Module.Core.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace ECommerce.Module.Core.Data
+{
+    public class FarmWorkflowModelBuilder : ICustomModelBuilder
+    {
+        public void Build(ModelBuilder b)
+        {
+            var a = b.Entity<FarmAdvisory>();
+            a.ToTable("Core_FarmAdvisory"); a.HasKey(x => x.Id);
+            a.Property(x => x.Version).IsConcurrencyToken();
+            a.Property(x => x.Kind).HasMaxLength(32).IsRequired();
+            a.Property(x => x.Title).HasMaxLength(160).IsRequired();
+            a.Property(x => x.Recommendation).HasMaxLength(4000).IsRequired();
+            a.Property(x => x.Crop).HasMaxLength(100);
+            a.Property(x => x.Variety).HasMaxLength(100);
+            a.Property(x => x.GrowthStage).HasMaxLength(100);
+            a.Property(x => x.Status).HasMaxLength(16).IsRequired();
+            a.Property(x => x.TargetOrchardsJson).IsRequired();
+            a.Property(x => x.CancellationReason).HasMaxLength(1000);
+            a.HasIndex(x => new { x.Status, x.CreatedOn });
+            var r = b.Entity<FarmAdvisoryRecipient>();
+            r.ToTable("Core_FarmAdvisoryRecipient"); r.HasKey(x => x.Id);
+            r.Property(x => x.Version).IsConcurrencyToken();
+            r.Property(x => x.OrchardName).HasMaxLength(500);
+            r.HasOne(x => x.Advisory).WithMany().HasForeignKey(x => x.AdvisoryId).OnDelete(DeleteBehavior.Restrict);
+            r.HasOne(x => x.Orchard).WithMany().HasForeignKey(x => x.OrchardProfileId).OnDelete(DeleteBehavior.Restrict);
+            r.HasIndex(x => new { x.AdvisoryId, x.OrchardProfileId }).IsUnique();
+            r.HasIndex(x => new { x.FarmerId, x.OrchardProfileId });
+            var ack = b.Entity<FarmAcknowledgment>();
+            ack.ToTable("Core_FarmAcknowledgment"); ack.HasKey(x => x.Id);
+            ack.HasIndex(x => x.RecipientId).IsUnique();
+            ack.HasOne<FarmAdvisoryRecipient>().WithMany().HasForeignKey(x => x.RecipientId).OnDelete(DeleteBehavior.Restrict);
+            var op = b.Entity<FarmOperation>();
+            op.ToTable("Core_FarmOperation"); op.HasKey(x => x.Id);
+            op.Property(x => x.Version).IsConcurrencyToken();
+            op.Property(x => x.Kind).HasMaxLength(32).IsRequired();
+            op.Property(x => x.Status).HasMaxLength(16).IsRequired();
+            op.Property(x => x.OperationDate).HasColumnType("date");
+            op.Property(x => x.CoverageValue).HasColumnType("decimal(18,4)");
+            op.Property(x => x.CoverageUnit).HasMaxLength(16).IsRequired();
+            op.Property(x => x.LabourHours).HasColumnType("decimal(18,4)");
+            op.Property(x => x.EquipmentHours).HasColumnType("decimal(18,4)");
+            op.Property(x => x.Cost).HasColumnType("decimal(18,2)");
+            op.Property(x => x.Currency).HasMaxLength(3);
+            op.Property(x => x.MaterialName).HasMaxLength(200);
+            op.Property(x => x.MaterialQuantity).HasColumnType("decimal(18,4)");
+            op.Property(x => x.MaterialUnit).HasMaxLength(16);
+            op.Property(x => x.Target).HasMaxLength(200);
+            op.Property(x => x.DoseValue).HasColumnType("decimal(18,4)");
+            op.Property(x => x.DoseUnit).HasMaxLength(16);
+            op.Property(x => x.MixtureTotalLitres).HasColumnType("decimal(18,4)");
+            op.Property(x => x.IrrigationTotalLitres).HasColumnType("decimal(18,4)");
+            op.Property(x => x.PruningType).HasMaxLength(32);
+            op.Property(x => x.HarvestQuantityKg).HasColumnType("decimal(18,4)");
+            op.Property(x => x.Notes).HasMaxLength(2000);
+            op.Property(x => x.VoidReason).HasMaxLength(1000);
+            op.HasOne<FarmAdvisoryRecipient>().WithMany().HasForeignKey(x => x.RecipientId).OnDelete(DeleteBehavior.Restrict);
+            op.HasIndex(x => new { x.OrchardProfileId, x.OperationDate });
+            op.HasIndex(x => new { x.FarmerId, x.Status });
+            var lot = b.Entity<FarmHarvestSaleLot>();
+            lot.ToTable("Core_FarmHarvestSaleLot"); lot.HasKey(x => x.Id);
+            lot.Property(x => x.QuantityKg).HasColumnType("decimal(18,4)");
+            lot.Property(x => x.PricePerKg).HasColumnType("decimal(18,4)");
+            lot.Property(x => x.Income).HasColumnType("decimal(18,2)");
+            lot.Property(x => x.BuyerOrMandi).HasMaxLength(200);
+            lot.HasOne(x => x.Operation).WithMany().HasForeignKey(x => x.OperationId).OnDelete(DeleteBehavior.Restrict);
+            lot.HasIndex(x => x.OperationId);
+            var sample = b.Entity<FarmLabSample>();
+            sample.ToTable("Core_FarmLabSample"); sample.HasKey(x => x.Id);
+            sample.Property(x => x.SampleType).HasMaxLength(16).IsRequired(); sample.Property(x => x.SampledAt).HasColumnType("date");
+            sample.Property(x => x.LabName).HasMaxLength(200); sample.Property(x => x.Status).HasMaxLength(16).IsRequired();
+            sample.HasOne<OrchardProfile>().WithMany().HasForeignKey(x => x.OrchardProfileId).OnDelete(DeleteBehavior.Restrict);
+            sample.HasIndex(x => new { x.OrchardProfileId, x.SampleType, x.SampledAt });
+            var report = b.Entity<FarmLabReport>(); report.ToTable("Core_FarmLabReport"); report.HasKey(x => x.Id);
+            report.Property(x => x.Status).HasMaxLength(16).IsRequired(); report.Property(x => x.ReportedAt).HasColumnType("date");
+            report.Property(x => x.Source).HasMaxLength(100); report.Property(x => x.MethodNotes).HasMaxLength(2000); report.Property(x => x.ReviewNotes).HasMaxLength(2000);
+            report.HasOne(x => x.Sample).WithMany().HasForeignKey(x => x.SampleId).OnDelete(DeleteBehavior.Restrict); report.HasIndex(x => new { x.SampleId, x.VersionNumber }).IsUnique();
+            var reading = b.Entity<FarmLabReading>(); reading.ToTable("Core_FarmLabReading"); reading.HasKey(x => x.Id);
+            reading.Property(x => x.AnalyteCode).HasMaxLength(64).IsRequired(); reading.Property(x => x.Value).HasColumnType("decimal(18,6)"); reading.Property(x => x.Unit).HasMaxLength(32).IsRequired(); reading.Property(x => x.Method).HasMaxLength(200);
+            reading.HasOne(x => x.Report).WithMany().HasForeignKey(x => x.ReportId).OnDelete(DeleteBehavior.Restrict); reading.HasIndex(x => new { x.ReportId, x.AnalyteCode }).IsUnique();
+            var attachment = b.Entity<FarmLabAttachment>(); attachment.ToTable("Core_FarmLabAttachment"); attachment.HasKey(x => x.Id);
+            attachment.Property(x => x.FileName).HasMaxLength(260).IsRequired(); attachment.Property(x => x.ContentType).HasMaxLength(100).IsRequired(); attachment.Property(x => x.ScanStatus).HasMaxLength(16).IsRequired();
+            attachment.HasOne(x => x.Report).WithMany().HasForeignKey(x => x.ReportId).OnDelete(DeleteBehavior.Restrict); attachment.HasIndex(x => new { x.ReportId, x.BlobFileReferenceId }).IsUnique();
+            attachment.HasOne<BlobFileReference>().WithMany().HasForeignKey(x => x.BlobFileReferenceId).OnDelete(DeleteBehavior.Restrict);
+            var rule = b.Entity<FarmNutrientRangeRule>(); rule.ToTable("Core_FarmNutrientRangeRule"); rule.HasKey(x => x.Id);
+            rule.Property(x => x.Version).IsConcurrencyToken(); rule.Property(x => x.AnalyteCode).HasMaxLength(64).IsRequired(); rule.Property(x => x.Crop).HasMaxLength(100); rule.Property(x => x.Variety).HasMaxLength(100); rule.Property(x => x.GrowthStage).HasMaxLength(100);
+            rule.Property(x => x.Unit).HasMaxLength(32).IsRequired(); rule.Property(x => x.Minimum).HasColumnType("decimal(18,6)"); rule.Property(x => x.Maximum).HasColumnType("decimal(18,6)"); rule.Property(x => x.Status).HasMaxLength(16).IsRequired(); rule.Property(x => x.Evidence).HasMaxLength(2000); rule.HasIndex(x => new { x.AnalyteCode, x.Status });
+            var delegation = b.Entity<FarmVendorDelegation>(); delegation.ToTable("Core_FarmVendorDelegation"); delegation.HasKey(x => x.Id); delegation.Property(x => x.Version).IsConcurrencyToken(); delegation.Property(x => x.PermissionsJson).IsRequired(); delegation.Property(x => x.Status).HasMaxLength(16).IsRequired(); delegation.Property(x => x.RevocationReason).HasMaxLength(1000); delegation.HasIndex(x => new { x.VendorId, x.OrchardProfileId, x.Status }); delegation.HasIndex(x => new { x.FarmerId, x.OrchardProfileId });
+            var support = b.Entity<FarmSupportCase>(); support.ToTable("Core_FarmSupportCase"); support.HasKey(x => x.Id); support.Property(x => x.Version).IsConcurrencyToken(); support.Property(x => x.Kind).HasMaxLength(32).IsRequired(); support.Property(x => x.Status).HasMaxLength(16).IsRequired(); support.Property(x => x.Title).HasMaxLength(160).IsRequired(); support.Property(x => x.Detail).HasMaxLength(4000); support.Property(x => x.ExpertResponse).HasMaxLength(4000); support.HasIndex(x => new { x.OrchardProfileId, x.Kind, x.CreatedOn }); support.HasIndex(x => new { x.FarmerId, x.Status });
+            var article = b.Entity<FarmArticleRead>(); article.ToTable("Core_FarmArticleRead"); article.HasKey(x => x.Id); article.Property(x => x.ArticleId).HasMaxLength(200).IsRequired(); article.HasIndex(x => new { x.UserId, x.ArticleId }).IsUnique();
+            var automation = b.Entity<FarmAutomationRule>(); automation.ToTable("Core_FarmAutomationRule"); automation.HasKey(x => x.Id); automation.Property(x => x.Version).IsConcurrencyToken(); automation.Property(x => x.Kind).HasMaxLength(64).IsRequired(); automation.Property(x => x.ConfigurationJson).IsRequired(); automation.Property(x => x.Evidence).HasMaxLength(2000).IsRequired(); automation.Property(x => x.Status).HasMaxLength(16).IsRequired(); automation.HasIndex(x => new { x.Kind, x.Status });
+            var audit = b.Entity<FarmWorkflowAudit>();
+            audit.ToTable("Core_FarmWorkflowAudit"); audit.HasKey(x => x.Id);
+            audit.Property(x => x.Action).HasMaxLength(32).IsRequired();
+            audit.Property(x => x.Detail).HasMaxLength(4000);
+            audit.HasIndex(x => new { x.SubjectId, x.CreatedOn });
+            var req = b.Entity<FarmWorkflowRequest>();
+            req.ToTable("Core_FarmWorkflowRequest"); req.HasKey(x => x.Id);
+            req.Property(x => x.Scope).HasMaxLength(100).IsRequired();
+            req.Property(x => x.Key).HasMaxLength(100).IsRequired();
+            req.Property(x => x.BodyHash).HasMaxLength(64).IsRequired();
+            req.Property(x => x.ResponseJson).IsRequired();
+            req.HasIndex(x => new { x.ActorId, x.Scope, x.Key }).IsUnique();
+            var e = b.Entity<FarmDeliveryEvent>();
+            e.ToTable("Core_FarmDeliveryEvent"); e.HasKey(x => x.Id);
+            e.Property(x => x.Version).IsConcurrencyToken();
+            e.Property(x => x.Kind).HasMaxLength(32).IsRequired();
+            e.Property(x => x.LastError).HasMaxLength(500);
+            e.Property(x => x.Outcome).HasMaxLength(100);
+            e.HasOne<FarmAdvisoryRecipient>().WithMany().HasForeignKey(x => x.RecipientId).OnDelete(DeleteBehavior.Restrict);
+            e.HasIndex(x => new { x.RecipientId, x.Kind }).IsUnique();
+            e.HasIndex(x => new { x.DeliveredOn, x.NextAttemptOn });
+        }
+    }
+}

@@ -1,0 +1,99 @@
+<div class="state-province-editor">
+    <header class="state-province-editor__header">
+        <h2>{{vm.isEditMode ? vm.translate.get('Edit State or Province') : vm.translate.get('Create State or Province')}}</h2>
+        <p class="text-muted" ng-if="vm.savedStateName">{{vm.savedStateName}}</p>
+    </header>
+
+    <div class="state-province-editor__tabs" role="tablist" aria-label="{{::vm.translate.get('State or Province')}}" ng-if="vm.isEditMode">
+        <button id="state-tab" type="button" role="tab" aria-controls="state-panel" ng-attr-aria-selected="{{vm.activeTab === 'state'}}" ng-attr-tabindex="{{vm.activeTab === 'state' ? 0 : -1}}" ng-class="{active: vm.activeTab === 'state'}" ng-click="vm.selectTab('state')" ng-keydown="vm.onTabKeydown($event)" ng-disabled="vm.isSavingState || vm.isAddingDistrict">{{::vm.translate.get('State or Province')}}</button>
+        <button id="districts-tab" type="button" role="tab" aria-controls="districts-panel" ng-attr-aria-selected="{{vm.activeTab === 'districts'}}" ng-attr-tabindex="{{vm.activeTab === 'districts' ? 0 : -1}}" ng-class="{active: vm.activeTab === 'districts'}" ng-click="vm.selectTab('districts')" ng-keydown="vm.onTabKeydown($event)" ng-disabled="vm.isSavingState || vm.isAddingDistrict">{{::vm.translate.get('Districts')}}</button>
+    </div>
+
+    <p role="status" ng-if="vm.isLoadingState">{{::vm.translate.get('Loading State or Province...')}}</p>
+    <div class="alert alert-danger" role="alert" ng-if="vm.stateLoadErrors">
+        <ul><li ng-repeat="error in vm.stateLoadErrors track by $index">{{error}}</li></ul>
+        <button class="btn btn-default" type="button" ng-click="vm.loadState()"><span class="glyphicon glyphicon-repeat" aria-hidden="true"></span> {{::vm.translate.get('Retry')}}</button>
+    </div>
+
+    <section id="state-panel" ng-show="vm.activeTab === 'state'" ng-attr-role="{{vm.isEditMode ? 'tabpanel' : undefined}}" ng-attr-aria-labelledby="{{vm.isEditMode ? 'state-tab' : undefined}}">
+        <form name="stateProvinceForm" ng-submit="vm.save(stateProvinceForm)" novalidate>
+            <div class="alert alert-danger" role="alert" ng-if="vm.validationErrors.length">
+                <ul><li ng-repeat="error in vm.validationErrors track by $index">{{error}}</li></ul>
+            </div>
+            <fieldset ng-disabled="vm.isSavingState || vm.isLoadingState || vm.stateLoadErrors">
+                <div class="state-province-editor__fields">
+                    <div class="form-group" ng-class="{'has-error': stateProvinceForm.name.$invalid && (stateProvinceForm.name.$touched || stateProvinceForm.$submitted)}">
+                        <label for="state-name">{{::vm.translate.get('Name')}} <span aria-hidden="true">*</span></label>
+                        <input id="state-name" name="name" ng-model="vm.stateProvince.name" class="form-control" required aria-describedby="state-name-error" />
+                        <span id="state-name-error" class="help-block" ng-show="stateProvinceForm.name.$error.required && (stateProvinceForm.name.$touched || stateProvinceForm.$submitted)">{{::vm.translate.get('Name is required.')}}</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="state-code">{{::vm.translate.get('Code')}}</label>
+                        <input id="state-code" name="code" ng-model="vm.stateProvince.code" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="state-type">{{::vm.translate.get('Type')}}</label>
+                        <input id="state-type" name="type" ng-model="vm.stateProvince.type" class="form-control" />
+                    </div>
+                </div>
+                <div class="state-province-editor__actions">
+                    <button type="submit" class="btn btn-primary" ng-disabled="stateProvinceForm.$invalid"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> {{vm.isSavingState ? vm.translate.get('Saving...') : vm.translate.get('Save')}}</button>
+                    <a ui-sref="country-states-provinces({countryId: vm.countryId})" class="btn btn-default" ng-if="!vm.isSavingState">{{::vm.translate.get('Cancel')}}</a>
+                </div>
+            </fieldset>
+        </form>
+    </section>
+
+    <section id="districts-panel" role="tabpanel" aria-labelledby="districts-tab" ng-if="vm.isEditMode" ng-show="vm.activeTab === 'districts'">
+        <div class="alert alert-danger" role="alert" ng-if="vm.districtLoadErrors">
+            <ul><li ng-repeat="error in vm.districtLoadErrors track by $index">{{error}}</li></ul>
+            <button class="btn btn-default" type="button" ng-click="vm.loadDistricts()"><span class="glyphicon glyphicon-repeat" aria-hidden="true"></span> {{::vm.translate.get('Retry')}}</button>
+        </div>
+        <form name="districtForm" ng-submit="vm.addDistrict(districtForm)" novalidate class="state-province-editor__district-form">
+            <h3>{{::vm.translate.get('Add District')}}</h3>
+            <div class="alert alert-danger" role="alert" ng-if="vm.districtErrors.length">
+                <ul><li ng-repeat="error in vm.districtErrors track by $index">{{error}}</li></ul>
+            </div>
+            <p class="text-success" role="status" ng-if="vm.districtSuccess">{{vm.districtSuccess}}</p>
+            <fieldset ng-disabled="vm.isLoadingState || vm.stateLoadErrors || vm.isLoadingDistricts || vm.districtLoadErrors || vm.isAddingDistrict">
+                <div class="state-province-editor__fields">
+                    <div class="form-group" ng-class="{'has-error': districtForm.name.$invalid && (districtForm.name.$touched || districtForm.$submitted)}">
+                        <label for="district-name">{{::vm.translate.get('Name')}} <span aria-hidden="true">*</span></label>
+                        <input id="district-name" name="name" ng-model="vm.district.name" class="form-control" required maxlength="450" aria-describedby="district-name-error" />
+                        <span id="district-name-error" class="help-block" ng-show="districtForm.name.$error.required && (districtForm.name.$touched || districtForm.$submitted)">{{::vm.translate.get('Name is required.')}}</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="district-type">{{::vm.translate.get('Type')}}</label>
+                        <input id="district-type" name="type" value="District" class="form-control" disabled />
+                    </div>
+                    <div class="form-group">
+                        <label for="district-location">{{::vm.translate.get('Location')}}</label>
+                        <input id="district-location" name="location" ng-value="vm.savedStateName" class="form-control" disabled />
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" ng-disabled="districtForm.$invalid"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> {{vm.isAddingDistrict ? vm.translate.get('Adding...') : vm.translate.get('Add District')}}</button>
+            </fieldset>
+        </form>
+
+        <div class="state-province-editor__list-heading">
+            <h3>{{::vm.translate.get('Districts')}} <span class="text-muted" ng-if="!vm.isLoadingDistricts && !vm.districtLoadErrors && !vm.isLoadingState && !vm.stateLoadErrors">({{vm.districts.length}})</span></h3>
+            <div class="state-province-editor__search">
+                <label class="sr-only" for="district-search">{{::vm.translate.get('Search districts by name')}}</label>
+                <input id="district-search" type="search" class="form-control" ng-model="vm.districtSearch" placeholder="{{::vm.translate.get('Search districts by name')}}" />
+                <button class="btn btn-default state-province-editor__refresh" type="button" ng-click="vm.loadDistricts()" ng-disabled="vm.isLoadingState || vm.stateLoadErrors || vm.isLoadingDistricts || vm.isAddingDistrict" title="{{::vm.translate.get('Refresh districts')}}" aria-label="{{::vm.translate.get('Refresh districts')}}"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>
+            </div>
+        </div>
+        <p role="status" ng-if="vm.isLoadingDistricts">{{::vm.translate.get('Loading districts...')}}</p>
+        <table class="table table-striped state-province-editor__table" ng-show="!vm.isLoadingState && !vm.stateLoadErrors && !vm.isLoadingDistricts && !vm.districtLoadErrors">
+            <caption class="sr-only">{{::vm.translate.get('Districts')}}: {{vm.savedStateName}}</caption>
+            <thead><tr><th scope="col">{{::vm.translate.get('Name')}}</th><th scope="col">{{::vm.translate.get('Type')}}</th><th scope="col">{{::vm.translate.get('Location')}}</th></tr></thead>
+            <tbody>
+                <tr ng-repeat="district in vm.districts | filter:{name: vm.districtSearch} | orderBy:'name' as filteredDistricts track by district.id">
+                    <td>{{district.name}}</td><td>{{district.type || '-'}}</td><td>{{district.location || '-'}}</td>
+                </tr>
+                <tr ng-if="!vm.districts.length"><td colspan="3" class="text-muted">{{::vm.translate.get('No districts added.')}}</td></tr>
+                <tr ng-if="vm.districts.length && !filteredDistricts.length"><td colspan="3" class="text-muted">{{::vm.translate.get('No matching districts.')}}</td></tr>
+            </tbody>
+        </table>
+    </section>
+</div>

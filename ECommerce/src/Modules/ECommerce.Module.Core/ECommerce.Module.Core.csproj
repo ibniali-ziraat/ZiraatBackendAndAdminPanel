@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <PropertyGroup>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Content Remove="bundleconfig.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="bundleconfig.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Azure.Storage.Blobs" Version="12.18.0" />
+        <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.9" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="7.0.10" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\ECommerce.Infrastructure\ECommerce.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Areas\Core\Views\EmailTemplate\" />
+    </ItemGroup>
+</Project>

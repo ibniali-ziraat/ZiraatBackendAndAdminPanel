@@ -1,0 +1,80 @@
+<div class="admin-account">
+    <header class="admin-account__heading">
+        <div><h2>{{::vm.translate.get('Account settings')}}</h2></div>
+        <a ui-sref="dashboard" href="#!/dashboard" class="admin-account__back"><i class="fa fa-arrow-left" aria-hidden="true"></i> {{::vm.translate.get('Dashboard')}}</a>
+    </header>
+
+    <div ng-if="vm.loading" class="admin-account__loading" role="status"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i> {{::vm.translate.get('Loading account')}}</div>
+    <div ng-if="vm.loadError" class="admin-account__error" role="alert">
+        <p>{{vm.loadError}}</p>
+        <button type="button" class="btn btn-default" ng-click="vm.load()"><i class="fa fa-refresh" aria-hidden="true"></i> {{::vm.translate.get('Retry')}}</button>
+        <a href="admin/login">{{::vm.translate.get('Sign in')}}</a>
+    </div>
+
+    <div ng-if="!vm.loading && !vm.loadError">
+        <section class="admin-account__section" aria-labelledby="account-profile-title">
+            <div class="admin-account__section-heading">
+                <i class="fa fa-user" aria-hidden="true"></i>
+                <h3 id="account-profile-title">{{::vm.translate.get('Profile')}}</h3>
+            </div>
+            <form name="profileForm" ng-submit="vm.saveProfile(profileForm)" novalidate>
+                <div class="admin-account__fields">
+                    <div class="form-group">
+                        <label for="account-name">{{::vm.translate.get('Full name')}}</label>
+                        <input id="account-name" name="fullName" class="form-control" ng-model="vm.profile.fullName" maxlength="450" autocomplete="name" required />
+                        <span class="admin-account__field-error" ng-if="profileForm.fullName.$touched && profileForm.fullName.$invalid">{{::vm.translate.get('Enter your full name.')}}</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="account-email">{{::vm.translate.get('Email')}}</label>
+                        <input id="account-email" class="form-control" ng-model="vm.profile.email" readonly autocomplete="email" />
+                    </div>
+                    <div class="form-group">
+                        <label for="account-phone">{{::vm.translate.get('Phone number')}}</label>
+                        <input id="account-phone" class="form-control" ng-model="vm.account.phoneNumber" readonly autocomplete="tel" />
+                    </div>
+                    <div class="admin-account__status">
+                        <span>{{::vm.translate.get('Two-factor authentication')}}</span>
+                        <strong><i ng-class="vm.account.twoFactor ? 'fa fa-check-circle' : 'fa fa-minus-circle'" aria-hidden="true"></i> {{vm.account.twoFactor ? vm.translate.get('Enabled') : vm.translate.get('Not enabled')}}</strong>
+                    </div>
+                </div>
+                <p class="admin-account__error" role="alert" ng-if="vm.profileError">{{vm.profileError}}</p>
+                <p class="admin-account__success" role="status" ng-if="vm.profileSuccess">{{vm.profileSuccess}}</p>
+                <button type="submit" class="btn btn-primary" ng-disabled="profileForm.$invalid || profileForm.$pristine || vm.savingProfile">
+                    <i ng-class="vm.savingProfile ? 'fa fa-spinner fa-spin' : 'fa fa-check'" aria-hidden="true"></i> {{vm.savingProfile ? vm.translate.get('Saving') : vm.translate.get('Save profile')}}
+                </button>
+            </form>
+        </section>
+
+        <section class="admin-account__section" aria-labelledby="account-password-title">
+            <div class="admin-account__section-heading">
+                <i class="fa fa-lock" aria-hidden="true"></i>
+                <h3 id="account-password-title">{{vm.account.hasPassword ? vm.translate.get('Change password') : vm.translate.get('Set password')}}</h3>
+                <button type="button" class="admin-account__icon" ng-click="vm.showPasswords = !vm.showPasswords" ng-attr-title="{{vm.showPasswords ? vm.translate.get('Hide passwords') : vm.translate.get('Show passwords')}}" ng-attr-aria-label="{{vm.showPasswords ? vm.translate.get('Hide passwords') : vm.translate.get('Show passwords')}}" ng-attr-aria-pressed="{{!!vm.showPasswords}}">
+                    <i ng-class="vm.showPasswords ? 'fa fa-eye-slash' : 'fa fa-eye'" aria-hidden="true"></i>
+                </button>
+            </div>
+            <form name="passwordForm" ng-submit="vm.savePassword(passwordForm)" novalidate>
+                <div class="admin-account__fields">
+                    <div class="form-group admin-account__full" ng-if="vm.account.hasPassword">
+                        <label for="account-current-password">{{::vm.translate.get('Current password')}}</label>
+                        <input id="account-current-password" name="oldPassword" class="form-control" type="{{vm.showPasswords ? 'text' : 'password'}}" ng-model="vm.password.oldPassword" autocomplete="current-password" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="account-new-password">{{::vm.translate.get('New password')}}</label>
+                        <input id="account-new-password" name="newPassword" class="form-control" type="{{vm.showPasswords ? 'text' : 'password'}}" ng-model="vm.password.newPassword" minlength="6" maxlength="100" autocomplete="new-password" required />
+                        <span class="admin-account__field-error" ng-if="passwordForm.newPassword.$touched && passwordForm.newPassword.$invalid">{{::vm.translate.get('Enter a password of 6 to 100 characters.')}}</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="account-confirm-password">{{::vm.translate.get('Confirm new password')}}</label>
+                        <input id="account-confirm-password" name="confirmPassword" class="form-control" type="{{vm.showPasswords ? 'text' : 'password'}}" ng-model="vm.password.confirmPassword" autocomplete="new-password" required />
+                    </div>
+                </div>
+                <p class="admin-account__error" role="alert" ng-if="vm.passwordError">{{vm.passwordError}}</p>
+                <p class="admin-account__success" role="status" ng-if="vm.passwordSuccess">{{vm.passwordSuccess}}</p>
+                <button type="submit" class="btn btn-primary" ng-disabled="passwordForm.$invalid || vm.savingPassword">
+                    <i ng-class="vm.savingPassword ? 'fa fa-spinner fa-spin' : 'fa fa-lock'" aria-hidden="true"></i> {{vm.savingPassword ? vm.translate.get('Saving') : vm.translate.get('Update password')}}
+                </button>
+            </form>
+        </section>
+    </div>
+</div>

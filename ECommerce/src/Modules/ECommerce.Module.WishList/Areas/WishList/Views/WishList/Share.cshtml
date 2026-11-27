@@ -1,0 +1,52 @@
+@{
+    ViewData["Title"] = Localizer["Wish List Sharing Information"];
+    ViewData["HideChrome"] = true;
+}
+
+<div class="acct-shell acct-shell--dashboard">
+    <div class="acct-body acct-body--dashboard">
+        <partial name="_AccountMenu" />
+
+        <main class="acct-content acct-dashboard">
+            <section class="acct-dashboard-hero acct-dashboard-hero--compact">
+                <div class="acct-dashboard-hero__copy">
+                    <span class="acct-kicker">@Localizer["Share"]</span>
+                    <h1>@Localizer["Wish List Sharing Information"]</h1>
+                    <p>@Localizer["Send your wish list to someone by email with an optional message."]</p>
+                </div>
+                <div class="acct-dashboard-hero__panel">
+                    <span>@Localizer["Wishlist"]</span>
+                    <strong>@Localizer["Share by email"]</strong>
+                    <small>@Localizer["The recipient receives your wish list link."]</small>
+                </div>
+            </section>
+
+            <section class="acct-form-panel">
+                <div class="acct-form-panel__header">
+                    <div>
+                        <span class="acct-card-label">@Localizer["Message details"]</span>
+                        <h2>@Localizer["Wish List Sharing Information"]</h2>
+                    </div>
+                    <a href="~/user/wishlist" class="acct-secondary-action">@Localizer["Back to wish list"]</a>
+                </div>
+
+                <form asp-area="WishList" asp-controller="WishList" asp-action="Share" method="POST" class="acct-modern-form">
+                    <div class="acct-validation-summary">@Html.ValidationSummary(false)</div>
+                    <div class="acct-form-grid acct-form-grid--single">
+                        <div class="acct-field">
+                            <label>@Localizer["Email Address"]</label>
+                            <input type="email" name="EmailAddress" class="form-control" />
+                        </div>
+                        <div class="acct-field">
+                            <label>@Localizer["Message"]</label>
+                            <textarea rows="5" name="Message" class="form-control"></textarea>
+                        </div>
+                    </div>
+                    <div class="acct-form-actions">
+                        <button type="submit" class="acct-primary-action share-wishlist">@Localizer["Share"]</button>
+                    </div>
+                </form>
+            </section>
+        </main>
+    </div>
+</div>

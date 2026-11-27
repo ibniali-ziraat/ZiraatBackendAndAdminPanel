@@ -1,0 +1,22 @@
+@using ECommerce.Module.Core.Models
+@using ECommerce.Module.Core.Extensions
+
+@inject IWorkContext WorkContext
+@inject SignInManager<User> SignInManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <a class="invenzo-auth-link invenzo-auth-user" asp-area="Core" asp-controller="Manage" asp-action="Index" title="@Localizer["Manage"]">@Localizer["Hello {0}!", (await WorkContext.GetCurrentUser()).FullName]</a>
+    if (User.IsInRole("admin") || User.IsInRole("vendor"))
+    {
+        <a class="invenzo-auth-link" href="/admin#!/dashboard">@Localizer["Dashboard"]</a>
+    }
+    <form asp-area="Core" asp-controller="Account" asp-action="LogOff" method="post" id="logoutForm" class="invenzo-logout-form">
+        <button type="submit" class="invenzo-auth-link invenzo-auth-button">@Localizer["Log off"]</button>
+    </form>
+}
+else
+{
+    <a class="invenzo-auth-link" asp-area="Core" asp-controller="Account" asp-action="Login">@Localizer["Log in"]</a>
+    <a class="invenzo-auth-link invenzo-auth-cta" asp-area="Core" asp-controller="Account" asp-action="Register">@Localizer["Register"]</a>
+}

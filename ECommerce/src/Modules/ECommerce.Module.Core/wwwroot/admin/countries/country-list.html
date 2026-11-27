@@ -1,0 +1,85 @@
+﻿<div class="page-header">
+    <div class="row">
+        <div class="col-md-8">
+            <h2>{{::vm.translate.get('Countries')}}</h2>
+        </div>
+        <div class="col-md-4 text-right">
+            <a ui-sref="country-create" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> {{::vm.translate.get('Create Country')}}</a>
+        </div>
+    </div>
+</div>
+
+<table class="table table-striped" st-pipe="vm.getCountries" st-table="vm.users">
+    <thead>
+        <tr>
+            <th st-sort="Name" class="sortable">{{::vm.translate.get('Name')}}</th>
+            <th st-sort="IsShippingEnabled" class="sortable" st-sort-default="reverse">{{::vm.translate.get('Is Shipping Enabled')}}</th>
+            <th st-sort="IsBillingEnabled" class="sortable">{{::vm.translate.get('Is Billing Enabled')}}</th>
+            <th st-sort="IsBillingEnabled" class="sortable">{{::vm.translate.get('Display City')}}</th>
+            <th st-sort="IsBillingEnabled" class="sortable">{{::vm.translate.get('Display Postal Code')}}</th>
+            <th st-sort="IsBillingEnabled" class="sortable">{{::vm.translate.get('Display District')}}</th>
+            <th class="sortable">&nbsp;</th>
+        </tr>
+        <tr>
+            <th>
+                <div class="form-group">
+                    <input class="form-control" st-search="Name" />
+                </div>
+            </th>
+            <th></th>
+        </tr>
+        <tr>
+            <th ng-show="!vm.isLoading" colspan="7">{{vm.tableStateRef.pagination.totalItemCount | number:0}} {{::vm.translate.get('records found')}}</th>
+        </tr>
+    </thead>
+    <tbody ng-show="!vm.isLoading">
+        <tr ng-repeat="country in vm.countries">
+            <td>{{country.name}}</td>
+            <td>
+                <input type="checkbox" ng-model="country.isShippingEnabled" ng-click="vm.update(country)">
+            </td>
+            <td>
+                <input type="checkbox" ng-model="country.isBillingEnabled" ng-click="vm.update(country)">
+            </td>
+            <td>
+                <input type="checkbox" ng-model="country.isCityEnabled" ng-click="vm.update(country)">
+            </td>
+            <td>
+                <input type="checkbox" ng-model="country.isZipCodeEnabled" ng-click="vm.update(country)">
+            </td>
+            <td>
+                <input type="checkbox" ng-model="country.isDistrictEnabled" ng-click="vm.update(country)">
+            </td>
+            <td class="text-center">
+                <div class="dropdown" style="display:inline-block">
+                    <button class="btn btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-cog"></i> <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li>
+                            <a ui-sref="country-edit({id: country.id})">
+                                <span class="glyphicon glyphicon-pencil"></span> {{::vm.translate.get('Edit')}}
+                            </a>
+                        </li>
+                        <li role="separator" class="divider"></li>
+                        <li>
+                            <a href ng-click="vm.deleteCountry(country)" style="color:#c0392b">
+                                <span class="glyphicon glyphicon-remove"></span> {{::vm.translate.get('Delete')}}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+    <tbody ng-show="vm.isLoading">
+        <tr>
+            <td colspan="7" class="text-center">Loading ... </td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td class="text-center" st-pagination="" st-items-by-page="50" st-displayed-pages="10" colspan="7"></td>
+        </tr>
+    </tfoot>
+</table>

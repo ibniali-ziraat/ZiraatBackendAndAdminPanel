@@ -1,0 +1,9 @@
+@model int
+
+<a href="~/cart" class="invenzo-cart-link" aria-label="View cart">
+    <span class="invenzo-cart-icon">
+        <i class="zmdi zmdi-shopping-cart" aria-hidden="true"></i>
+    </span>
+    <span class="invenzo-cart-text">@Localizer["Cart"]</span>
+    <span class="invenzo-cart-count">@Model</span>
+</a>

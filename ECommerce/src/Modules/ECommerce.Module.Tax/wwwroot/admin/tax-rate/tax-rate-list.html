@@ -1,0 +1,56 @@
+﻿<div class="page-header">
+    <div class="row">
+        <div class="col-md-8">
+            <h2>{{::vm.translate.get('Tax Rates')}}</h2>
+        </div>
+        <div class="col-md-4 admin-page-actions" style="display:flex;justify-content:flex-end;align-items:center;gap:8px;flex-wrap:wrap;">
+            <a href="/api/tax-rates/export" target="_blank" class="btn btn-info"><span class="glyphicon glyphicon-download-alt"></span> {{::vm.translate.get('Export')}}</a>
+            <a ui-sref="tax-rates-import" class="btn btn-primary"><span class="glyphicon glyphicon-upload"></span> {{::vm.translate.get('Import')}}</a>
+            <a ui-sref="tax-rates-create" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> {{::vm.translate.get('Create Tax Rate')}}</a>
+        </div>
+    </div>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>{{::vm.translate.get('Id')}}</th>
+            <th>{{::vm.translate.get('Tax Class')}}</th>
+            <th>{{::vm.translate.get('Country')}}</th>
+            <th>{{::vm.translate.get('State or Province')}}</th>
+            <th>{{::vm.translate.get('Zip Code')}}</th>
+            <th>{{::vm.translate.get('Rate')}}</th>
+            <th>{{::vm.translate.get('Actions')}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="taxRate in vm.taxRates">
+            <td>{{taxRate.id}}</td>
+            <td>{{taxRate.tagClassName}}</td>
+            <td>{{taxRate.countryName}}</td>
+            <td>{{taxRate.stateOrProvinceName || "All"}}</td>
+            <td>{{taxRate.zipCode}}</td>
+            <td>{{taxRate.rate}}</td>
+            <td class="text-center">
+                <div class="dropdown" style="display:inline-block">
+                    <button class="btn btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-cog"></i> <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li>
+                            <a ui-sref="tax-rates-edit({id: taxRate.id})">
+                                <span class="glyphicon glyphicon-pencil"></span> {{::vm.translate.get('Edit')}}
+                            </a>
+                        </li>
+                        <li role="separator" class="divider"></li>
+                        <li>
+                            <a href ng-click="vm.deleteTaxRate(taxRate)" style="color:#c0392b">
+                                <span class="glyphicon glyphicon-remove"></span> {{::vm.translate.get('Delete')}}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>

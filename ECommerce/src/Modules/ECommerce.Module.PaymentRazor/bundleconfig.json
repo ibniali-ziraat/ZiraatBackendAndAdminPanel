@@ -1,0 +1,15 @@
+[
+  {
+    "outputFileName": "wwwroot/admin/paymentrazor.min.js",
+    "inputFiles": [
+      "wwwroot/admin/paymentRazor.module.js",
+      "wwwroot/admin/razor/razor-service.js",
+      "wwwroot/admin/razor/razor-config-form.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  }
+]

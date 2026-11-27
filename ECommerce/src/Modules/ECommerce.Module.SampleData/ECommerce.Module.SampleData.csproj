@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\ECommerce.Infrastructure\ECommerce.Infrastructure.csproj" />
+    <ProjectReference Include="..\ECommerce.Module.Core\ECommerce.Module.Core.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <SampleContent Include="SampleContent\**\*.*" />
+  </ItemGroup>
+  
+  <Target Name="CopyModule" AfterTargets="Build">
+    <Copy
+            SourceFiles="@(SampleContent)"
+            DestinationFiles="@(SampleContent->'..\..\ECommerce.WebHost\Modules\ECommerce.Module.SampleData\SampleContent\%(RecursiveDir)%(Filename)%(Extension)')"
+        />
+  </Target>
+</Project>

@@ -1,0 +1,571 @@
+/*================================================================
+    RESPONSIVE DESIGN ENHANCEMENTS
+    Mobile-First, Tablet-Optimized, Desktop Perfect
+================================================================*/
+
+/*================================================================
+[MOBILE FIRST - BASE STYLES]
+================================================================*/
+
+/* Default mobile view */
+body {
+    font-size: 14px;
+}
+
+.container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.container-fluid {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+}
+
+/*================================================================
+[SMALL DEVICES - (xs: 0px - 576px)]
+================================================================*/
+
+@media (max-width: 575.98px) {
+    :root {
+        --radius-2xl: 1.25rem;
+    }
+    
+    .d-none-xs {
+        display: none !important;
+    }
+    
+    .d-flex-xs {
+        display: flex !important;
+    }
+    
+    /* Reduce spacing on mobile */
+    .pt-5, .px-5, .py-5, .p-5 {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+    }
+    
+    /* Hide verbose elements */
+    .hide-on-mobile {
+        display: none !important;
+    }
+    
+    /* Reduce font sizes */
+    h1 {
+        font-size: 1.75rem !important;
+    }
+    
+    h2 {
+        font-size: 1.5rem !important;
+    }
+    
+    h3 {
+        font-size: 1.25rem !important;
+    }
+    
+    /* Navigation adjustments */
+    .navbar-expand-lg {
+        flex-direction: column;
+    }
+    
+    .navbar-collapse {
+        margin-top: 1rem;
+    }
+    
+    /* Product grid - 1 column on very small screens */
+    .product-list {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+    
+    .product-list .card-img-top {
+        height: 200px;
+    }
+    
+    /* Search bar full width */
+    .search-wrapper {
+        width: 100% !important;
+        order: 3 !important;
+        margin-top: 1rem !important;
+    }
+    
+    .search-wrapper input {
+        width: 100%;
+    }
+    
+    /* Reduce card padding */
+    .card {
+        margin-bottom: 0 !important;
+    }
+    
+    .card-body {
+        padding: 0.75rem !important;
+    }
+    
+    /* Footer adjustments */
+    .footer-glass .row {
+        text-align: center;
+    }
+    
+    .footer-title::after {
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+    }
+    
+    /* Modal adjustments */
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+    
+    /* Reduce button size on mobile */
+    .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+    }
+    
+    /* Full-width buttons */
+    .btn-block {
+        width: 100%;
+        display: block;
+    }
+    
+    /* Tables - horizontal scroll on mobile */
+    .table-responsive {
+        overflow-x: auto;
+    }
+    
+    .table {
+        min-width: 500px;
+    }
+    
+    /* Reduce top bar */
+    .top-bar-glass {
+        padding: 0.5rem 0;
+    }
+    
+    /* Logo adjustments */
+    .logo-text {
+        font-size: 1.25rem;
+    }
+    
+    .logo-icon {
+        font-size: 1.5rem;
+    }
+    
+    /* Cart icon larger for touch */
+    .cart-badge {
+        font-size: 1.5rem;
+    }
+}
+
+/*================================================================
+[MEDIUM DEVICES - TABLET (md: 768px - 991.98px)]
+================================================================*/
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+    body {
+        font-size: 14px;
+    }
+    
+    .d-none-md {
+        display: none !important;
+    }
+    
+    .d-flex-md {
+        display: flex !important;
+    }
+    
+    /* Product grid - 2 columns on tablet */
+    .product-list {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    
+    /* Sidebar adjustments */
+    .product-list-filters {
+        margin-bottom: 2rem;
+    }
+    
+    /* Adjust spacing */
+    .container {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+    
+    /* Table adjustments */
+    .table {
+        font-size: 0.9rem;
+    }
+    
+    /* Navigation */
+    .navbar-expand-lg {
+        padding: 0.5rem 0;
+    }
+    
+    .navbar-dark .navbar-nav .nav-link {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.9rem;
+    }
+    
+    /* Header logo size */
+    .logo-text {
+        font-size: 1.25rem;
+    }
+    
+    /* Modal size */
+    .modal-dialog {
+        max-width: 500px;
+    }
+}
+
+/*================================================================
+[LARGE DEVICES - DESKTOP (lg: 992px - 1199.98px)]
+================================================================*/
+
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    .d-none-lg {
+        display: none !important;
+    }
+    
+    .d-flex-lg {
+        display: flex !important;
+    }
+    
+    /* Product grid - 3 columns on desktop */
+    .product-list {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+    
+    /* Sidebar layout */
+    .sidebar-layout {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        gap: 2rem;
+    }
+}
+
+/*================================================================
+[EXTRA LARGE DEVICES - WIDE (xl: 1200px+)]
+================================================================*/
+
+@media (min-width: 1200px) {
+    .d-none-xl {
+        display: none !important;
+    }
+    
+    .d-flex-xl {
+        display: flex !important;
+    }
+    
+    /* Product grid - 4 columns on wide screens */
+    .product-list {
+        grid-template-columns: repeat(4, 1fr) !important;
+    }
+    
+    /* Sidebar layout */
+    .sidebar-layout {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 3rem;
+    }
+    
+    /* Container max-width */
+    .container {
+        max-width: 1320px;
+    }
+}
+
+/*================================================================
+[LANDSCAPE ADJUSTMENTS]
+================================================================*/
+
+@media (max-height: 500px) and (orientation: landscape) {
+    .top-bar-glass {
+        padding: 0.25rem 0;
+    }
+    
+    .main-header-glass {
+        padding: 0.5rem 0;
+    }
+    
+    h1 {
+        font-size: 1.5rem;
+    }
+    
+    .glass-container {
+        padding: 1rem !important;
+    }
+}
+
+/*================================================================
+[PORTRAIT ADJUSTMENTS]
+================================================================*/
+
+@media (max-width: 480px) and (orientation: portrait) {
+    .logo-text {
+        display: none;
+    }
+    
+    .search-wrapper {
+        margin-top: 1rem;
+    }
+    
+    .navbar-dark .navbar-nav {
+        flex-direction: column;
+    }
+}
+
+/*================================================================
+[SMALL LANDSCAPE]
+================================================================*/
+
+@media (max-width: 767px) and (orientation: landscape) {
+    .main-header-glass .row {
+        flex-wrap: wrap;
+    }
+    
+    .search-wrapper {
+        order: 3;
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+}
+
+/*================================================================
+[TOUCH DEVICES OPTIMIZATION]
+================================================================*/
+
+@media (hover: none) and (pointer: coarse) {
+    /* Larger touch targets - minimum 44x44px */
+    .btn,
+    .btn-link,
+    a,
+    button {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 0.5rem 1rem;
+    }
+    
+    /* Remove hover effects, use active instead */
+    .btn:active {
+        transform: scale(0.98);
+    }
+    
+    /* Increase tap feedback */
+    button,
+    a[role="button"],
+    .btn {
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Increase interactive element size */
+    .form-control {
+        min-height: 44px;
+        padding: 0.75rem 1rem;
+    }
+    
+    /* Larger input fields */
+    input[type="checkbox"],
+    input[type="radio"] {
+        width: 20px;
+        height: 20px;
+    }
+    
+    /* Better spacing for touch */
+    .btn {
+        margin-bottom: 0.5rem;
+    }
+}
+
+/*================================================================
+[HIGH RESOLUTION DISPLAYS]
+================================================================*/
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    /* Thinner borders and shadows for retina displays */
+    .glass-container {
+        border-width: 0.5px;
+    }
+    
+    /* Crisp text rendering */
+    body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}
+
+/*================================================================
+[LOW BANDWIDTH MODE]
+================================================================*/
+
+@media (prefers-reduced-data: reduce) {
+    /* Reduce animations and transitions */
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    /* Disable background images */
+    .bg-shapes,
+    .parallax {
+        background-image: none !important;
+    }
+    
+    /* Simplified gradients */
+    body {
+        background: #f8fafc !important;
+    }
+}
+
+/*================================================================
+[DARK MODE - SYSTEM PREFERENCE]
+================================================================*/
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    }
+    
+    .bg-shapes {
+        opacity: 0.05;
+    }
+}
+
+/*================================================================
+[PRINT LAYOUT]
+================================================================*/
+
+@media print {
+    .top-bar-glass,
+    .nav-glass,
+    .footer-glass,
+    .navbar-toggler,
+    .search-wrapper,
+    .cart-wrapper,
+    .btn-add-cart-style,
+    .btn-view-detail {
+        display: none !important;
+    }
+    
+    .glass-container {
+        box-shadow: none;
+        border: 1px solid #000;
+        page-break-inside: avoid;
+    }
+    
+    .product-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .product-list .card {
+        page-break-inside: avoid;
+    }
+    
+    body {
+        background: white;
+    }
+}
+
+/*================================================================
+[ACCESSIBILITY - FOCUS VISIBLE]
+================================================================*/
+
+@media (prefers-contrast: more) {
+    .btn,
+    a,
+    button {
+        border-width: 2px;
+    }
+    
+    .form-control {
+        border-width: 2px;
+    }
+}
+
+/*================================================================
+[FORCED COLORS MODE]
+================================================================*/
+
+@media (forced-colors: active) {
+    .btn {
+        border: 1px solid ButtonText;
+    }
+    
+    .glass-container {
+        border: 1px solid ButtonBorder;
+    }
+    
+    .product-list .card {
+        border: 1px solid CanvasText;
+    }
+}
+
+/*================================================================
+[SPECIFIC CONTAINER QUERIES]
+================================================================*/
+
+/* Container queries for component-level responsiveness */
+@supports (container-type: inline-size) {
+    .card-container {
+        container-type: inline-size;
+    }
+    
+    .product-list .card {
+        /* Card adapts to its container width */
+    }
+}
+
+/*================================================================
+[BREAKPOINT UTILITIES]
+================================================================*/
+
+/* Visible on small screens and smaller */
+.visible-xs-block {
+    display: none;
+}
+
+@media (max-width: 767px) {
+    .visible-xs-block {
+        display: block;
+    }
+}
+
+/* Visible on medium screens and smaller */
+.visible-sm-block {
+    display: none;
+}
+
+@media (max-width: 991px) {
+    .visible-sm-block {
+        display: block;
+    }
+}
+
+/* Visible on large screens and up */
+.visible-lg-block {
+    display: none;
+}
+
+@media (min-width: 992px) {
+    .visible-lg-block {
+        display: block;
+    }
+}
+
+/*================================================================
+[FLEXIBLE SPACING]
+================================================================*/
+
+@media (max-width: 767px) {
+    .p-md-5 {
+        padding: 1rem !important;
+    }
+    
+    .mt-md-4 {
+        margin-top: 1rem !important;
+    }
+    
+    .mb-md-4 {
+        margin-bottom: 1rem !important;
+    }
+}

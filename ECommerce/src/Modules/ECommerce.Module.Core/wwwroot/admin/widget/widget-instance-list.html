@@ -1,0 +1,63 @@
+﻿<div class="page-header">
+    <div class="row">
+        <div class="col-md-8">
+            <h2>{{::vm.translate.get('Widget Instances')}}</h2>
+        </div>
+        <div class="col-md-4 text-right">
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-plus"></span> {{::vm.translate.get('Create Widget')}}<span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu pull-right" role="menu">
+                    <li ng-repeat="widget in vm.widgets">
+                        <a ui-sref="{{widget.createUrl}}">{{widget.name}}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>{{::vm.translate.get('Name')}}</th>
+        <th>{{::vm.translate.get('Widget Type')}}</th>
+        <th>{{::vm.translate.get('Widget Zone')}}</th>
+        <th>{{::vm.translate.get('Publish Start')}}</th>
+        <th>{{::vm.translate.get('Publish End')}}</th>
+        <th>{{::vm.translate.get('Display Order')}}</th>
+        <th>{{::vm.translate.get('Actions')}}</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="instance in vm.widgetInstances">
+        <td>{{instance.name}}</td>
+        <td>{{instance.widgetType}}</td>
+        <td>{{instance.widgetZone}}</td>
+        <td>{{instance.publishStart | date:'medium'}}</td>
+        <td>{{instance.publishEnd | date:'medium'}}</td>
+        <td>{{instance.displayOrder}}</td>
+        <td class="text-center">
+            <div class="dropdown" style="display:inline-block">
+                <button class="btn btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-cog"></i> <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li>
+                        <a ui-sref="{{instance.editUrl}}({id: instance.id})">
+                            <span class="glyphicon glyphicon-pencil"></span> {{::vm.translate.get('Edit')}}
+                        </a>
+                    </li>
+                    <li role="separator" class="divider"></li>
+                    <li>
+                        <a href ng-click="vm.deleteWidgetInstance(instance)" style="color:#c0392b">
+                            <span class="glyphicon glyphicon-remove"></span> {{::vm.translate.get('Delete')}}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>

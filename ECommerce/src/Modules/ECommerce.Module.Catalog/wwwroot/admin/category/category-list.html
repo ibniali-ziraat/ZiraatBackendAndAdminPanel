@@ -1,0 +1,56 @@
+﻿<div class="page-header">
+    <div class="row">
+        <div class="col-md-8">
+            <h2>{{::vm.translate.get('Categories')}}</h2>
+        </div>
+        <div class="col-md-4 text-right">
+            <a ui-sref="category-create" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> {{::vm.translate.get('Create Category')}}</a>
+        </div>
+    </div>
+</div>
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>{{::vm.translate.get('Name')}}</th>
+        <th class="text-center">{{::vm.translate.get('Include in menu')}}</th>
+        <th>{{::vm.translate.get('Display order')}}</th>
+        <th class="text-center">{{::vm.translate.get('Is Published')}}</th>
+        <th>{{::vm.translate.get('Actions')}}</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="category in vm.categories">
+        <td>{{category.name}}</td>
+        <td class="text-center"><i ng-attr-class="{{category.includeInMenu && 'fa fa-circle' || 'fa fa-circle-o'}}"></i></td>
+        <td>{{category.displayOrder}}</td>
+        <td class="text-center"><i ng-attr-class="{{category.isPublished && 'fa fa-circle' || 'fa fa-circle-o'}}"></i></td>
+        <td class="text-center">
+            <div class="dropdown" style="display:inline-block">
+                <button class="btn btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-cog"></i> <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li>
+                        <a ui-sref="category-edit({id: category.id})">
+                            <span class="glyphicon glyphicon-pencil"></span> {{::vm.translate.get('Edit')}}
+                        </a>
+                    </li>
+                    <li ng-if="vm.enableCultures.length > 0" role="separator" class="divider"></li>
+                    <li ng-repeat="culture in vm.enableCultures">
+                        <a ui-sref="category-translation({id: category.id, culture: culture})">
+                            <span class="flag flag-{{culture.substr(culture.length - 2).toLowerCase()}}"></span> {{culture}}
+                        </a>
+                    </li>
+                    <li role="separator" class="divider"></li>
+                    <li>
+                        <a href ng-click="vm.deleteCategory(category)" style="color:#c0392b">
+                            <span class="glyphicon glyphicon-remove"></span> {{::vm.translate.get('Delete')}}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>

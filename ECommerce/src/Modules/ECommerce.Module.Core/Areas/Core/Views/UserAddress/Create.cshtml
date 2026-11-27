@@ -1,0 +1,44 @@
+@model ECommerce.Module.Core.Areas.Core.ViewModels.UserAddressFormViewModel
+@{
+    ViewData["Title"] = Localizer["Create address"];
+    ViewData["HideChrome"] = true;
+}
+
+<div class="acct-shell acct-shell--dashboard">
+    <div class="acct-body acct-body--dashboard">
+        <partial name="_AccountMenu" />
+
+        <main class="acct-content acct-dashboard">
+            <section class="acct-dashboard-hero acct-dashboard-hero--compact">
+                <div class="acct-dashboard-hero__copy">
+                    <span class="acct-kicker">@Localizer["Shipping"]</span>
+                    <h1>@Localizer["Create Address"]</h1>
+                    <p>@Localizer["Add a delivery address for faster checkout and order handling."]</p>
+                </div>
+                <div class="acct-dashboard-hero__panel">
+                    <span>@Localizer["New address"]</span>
+                    <strong>@Localizer["Delivery ready"]</strong>
+                    <small>@Localizer["Fill in the location and contact details below."]</small>
+                </div>
+            </section>
+
+            <section class="acct-form-panel">
+                <div class="acct-form-panel__header">
+                    <div>
+                        <span class="acct-card-label">@Localizer["Address form"]</span>
+                        <h2>@Localizer["Create Address"]</h2>
+                    </div>
+                    <a href="~/user/address" class="acct-secondary-action">@Localizer["Back to addresses"]</a>
+                </div>
+                <form asp-area="Core" asp-controller="UserAddress" asp-action="Create" method="POST" class="acct-modern-form">
+                    <partial name="_AddressForm" model="Model" />
+                </form>
+            </section>
+        </main>
+    </div>
+</div>
+
+@section scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/_content/ECommerce.Module.Core/user-address.js"></script>
+}

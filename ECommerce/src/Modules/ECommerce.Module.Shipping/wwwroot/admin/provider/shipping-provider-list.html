@@ -1,0 +1,48 @@
+﻿<div class="page-header">
+    <div class="row">
+        <div class="col-md-8">
+            <h2>{{::vm.translate.get('Shipping providers')}}</h2>
+        </div>
+    </div>
+</div>
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>{{::vm.translate.get('Name')}}</th>
+        <th class="text-center">{{::vm.translate.get('IsEnabled')}}</th>
+        <th>{{::vm.translate.get('Configure')}}</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="provider in vm.shippingProviders">
+        <td>{{provider.name}}</td>
+        <td class="text-center"><i ng-attr-class="{{provider.isEnabled && 'fa fa-circle' || 'fa fa-circle-o'}}"></i></td>
+        <td class="text-center">
+            <div class="dropdown" style="display:inline-block">
+                <button class="btn btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-cog"></i> <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li ng-if="provider.isEnabled">
+                        <a href ng-click="vm.disableProvider(provider)">
+                            <span class="glyphicon glyphicon-pause"></span> {{::vm.translate.get('Disable')}}
+                        </a>
+                    </li>
+                    <li ng-if="!provider.isEnabled">
+                        <a href ng-click="vm.enableProvider(provider)">
+                            <span class="glyphicon glyphicon-play"></span> {{::vm.translate.get('Enable')}}
+                        </a>
+                    </li>
+                    <li ng-if="provider.configureUrl" role="separator" class="divider"></li>
+                    <li ng-if="provider.configureUrl">
+                        <a ui-sref="{{provider.configureUrl}}">
+                            <span class="glyphicon glyphicon-cog"></span> {{::vm.translate.get('Configure')}}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>

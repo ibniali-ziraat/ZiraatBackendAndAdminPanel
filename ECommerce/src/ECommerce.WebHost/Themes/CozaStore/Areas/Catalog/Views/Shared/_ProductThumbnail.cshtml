@@ -1,0 +1,42 @@
+@model ECommerce.Module.Catalog.Areas.Catalog.ViewModels.ProductThumbnail
+
+<article class="invenzo-product-card">
+    <a href="~/@Model.Slug" class="invenzo-product-media">
+        <img alt="@Model.Name" class="card-img-top" src="@Model.ThumbnailUrl">
+        @if (!Model.IsCallForPricing && Model.CalculatedProductPrice.PercentOfSaving > 0)
+        {
+            <span class="invenzo-product-badge">-@(Model.CalculatedProductPrice.PercentOfSaving)%</span>
+        }
+    </a>
+
+    <div class="invenzo-product-content">
+        <div class="invenzo-product-rating">
+            <input type="hidden" value="@Model.RatingAverage" readonly="readonly" class="rating-loading" step="1" data-size="xs" data-show-clear="false" data-show-caption="false" />
+            @if (Model.ReviewsCount > 0)
+            {
+                <span class="invenzo-product-review-count">@Model.ReviewsCount @Localizer["reviews"]</span>
+            }
+        </div>
+
+        <a href="~/@Model.Slug" class="invenzo-product-title">
+            @Model.Name
+        </a>
+
+        <div class="invenzo-product-price-stack">
+            @if (Model.IsCallForPricing)
+            {
+                <span class="invenzo-product-price">@Localizer["Call for pricing"]</span>
+            }
+            else
+            {
+                <span class="invenzo-product-price">@Model.CalculatedProductPrice.PriceString</span>
+                if (Model.CalculatedProductPrice.PercentOfSaving > 0)
+                {
+                    <span class="invenzo-product-old-price">@Model.CalculatedProductPrice.OldPriceString</span>
+                }
+            }
+        </div>
+
+        <a href="~/@Model.Slug" class="invenzo-product-link">@Localizer["View details"]</a>
+    </div>
+</article>

@@ -1,0 +1,457 @@
+﻿@using System.Globalization
+@using System.IO
+@using System.Linq
+@using Microsoft.Extensions.Configuration
+@using Newtonsoft.Json
+@using ECommerce.Infrastructure
+@using ECommerce.Infrastructure.Data
+@using ECommerce.Infrastructure.Localization
+@using ECommerce.Module.Core.Extensions
+
+@inject IWorkContext WorkContext
+@inject IConfiguration Config
+@inject IRepositoryWithTypedId<Culture, string> CultureRepository
+
+@{
+    Layout = null;
+
+    var assetBundling = Config.GetValue<bool>("Global.AssetBundling");
+    var defaultCulture = Config.GetValue<string>("Global.DefaultCultureAdminUI") ??
+Config.GetValue<string>("Global.DefaultCultureUI");
+    var cultures = CultureRepository.Query().Where(x => x.Id != defaultCulture).Select(x => $"\"{x.Id}\"").ToArray();
+    var currentUser = await WorkContext.GetCurrentUser();
+    var currentUserName = currentUser?.FullName;
+
+    if (string.IsNullOrWhiteSpace(currentUserName))
+    {
+        currentUserName = User?.Identity?.Name ?? "Admin User";
+    }
+
+    if (User.IsInRole("admin"))
+    {
+        currentUserName = Localizer["Admin"].Value;
+    }
+
+    var userInitials = string.Concat(
+        currentUserName
+            .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+            .Take(2)
+            .Select(x => char.ToUpperInvariant(x[0])));
+
+    if (string.IsNullOrWhiteSpace(userInitials))
+    {
+        userInitials = "AU";
+    }
+}
+
+<!DOCTYPE html>
+<html ng-app="simplAdmin">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin - ECommerce</title>
+
+    <link simpl-append-version="true" rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link simpl-append-version="true" rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.css" />
+    <link simpl-append-version="true" rel="stylesheet" href="~/lib/angular-material/angular-material.css" />
+    <link simpl-append-version="true" rel="stylesheet" href="~/lib/angular-bootstrap/ui-bootstrap-csp.css" />
+    <link simpl-append-version="true" rel="stylesheet" href="~/lib/toastr/build/toastr.min.css" />
+    <link simpl-append-version="true" rel="stylesheet" href="~/lib/summernote/summernote.css" />
+    <link simpl-append-version="true" rel="stylesheet" href="~/lib/angular-ui-tree/angular-ui-tree.min.css" />
+    <link simpl-append-version="true" rel="stylesheet"
+          href="~/lib/angular-bootstrap-colorpicker/css/colorpicker.min.css" />
+    <link simpl-append-version="true" rel="stylesheet" href="~/lib/flags/flags.min.css" />
+    <link simpl-append-version="true" rel="stylesheet" href="~/_content/ECommerce.Module.Core/admin/admin-core.css" />
+    <link simpl-append-version="true" rel="stylesheet" href="~/_content/ECommerce.Module.Core/admin/account/account.css" />
+
+    <script>
+            window.Global_AssetVersion = "@Config["Global.AssetVersion"]";
+            window.Global_EnableCultures = [@Html.Raw(string.Join(",", cultures))];
+    </script>
+    <script simpl-append-version="true" src="~/lib/jquery/jquery.js"></script>
+    <script simpl-append-version="true" src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+    <script simpl-append-version="true" src="~/lib/summernote/summernote.js"></script>
+    <script simpl-append-version="true" src="~/lib/angular/angular.js"></script>
+    <script simpl-append-version="true" src="~/lib/angular-ui-router/angular-ui-router.js"></script>
+    <script simpl-append-version="true" src="~/lib/angular-animate/angular-animate.js"></script>
+    <script simpl-append-version="true" src="~/lib/angular-aria/angular-aria.js"></script>
+    <script simpl-append-version="true" src="~/lib/angular-messages/angular-messages.js"></script>
+    <script simpl-append-version="true" src="~/lib/angular-material/angular-material.js"></script>
+    <script simpl-append-version="true" src="~/lib/angular-smart-table/dist/smart-table.js"></script>
+    <script simpl-append-version="true" src="~/lib/ng-file-upload/dist/ng-file-upload.js"></script>
+    <script simpl-append-version="true" src="~/lib/angular-bootstrap/ui-bootstrap.js"></script>
+    <script simpl-append-version="true" src="~/lib/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script simpl-append-version="true" src="~/lib/bootstrap-ui-datetime-picker/datetime-picker.js"></script>
+    <script simpl-append-version="true" src="~/lib/bootstrap-ui-datetime-picker/datetime-picker.tpls.js"></script>
+    <script simpl-append-version="true" src="~/lib/angular-summernote/angular-summernote.js"></script>
+    <script simpl-append-version="true" src="~/lib/angular-ui-tree/angular-ui-tree.js"></script>
+    <script simpl-append-version="true"
+            src="~/lib/angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.js"></script>
+    <script simpl-append-version="true" src="~/lib/toastr/build/toastr.min.js"></script>
+    <script simpl-append-version="true" src="~/lib/bootbox/bootbox.js"></script>
+    <script simpl-append-version="true" src="~/lib/signalr/dist/browser/signalr.js"></script>
+    <script simpl-append-version="true"
+            src="~/lib/i18n/angular-locale_@(CultureInfo.CurrentCulture.Name.ToLower()).js"></script>
+
+    <script simpl-append-version="true" src="~/_content/ECommerce.Module.Core/admin/common/slugify.js"></script>
+    <script simpl-append-version="true" src="~/_content/ECommerce.Module.Core/admin/common/simplUtil.js"></script>
+    <script>
+        angular.module('simplAdmin', [
+        'ui.router',
+        'ngMaterial',
+        'ngMessages',
+        'smart-table',
+        'ngFileUpload',
+        'ui.bootstrap',
+        'ui.bootstrap.datetimepicker',
+        'ui.tree',
+        'summernote',
+        'colorpicker.module',
+        'simplAdmin.common',
+
+        @foreach (var angularModule in GlobalConfiguration.AngularModules)
+        {
+            <text>'@angularModule',</text>
+        }
+        'simplAdmin.dashboard'
+        ]);
+    </script>
+    <script simpl-append-version="true" src="~/_content/ECommerce.Module.Core/admin/admin-app-config.js"></script>
+    <script simpl-append-version="true" src="~/_content/ECommerce.Module.Core/admin/common/common.js"></script>
+    <script simpl-append-version="true"
+            src="~/_content/ECommerce.Module.Core/admin/common/admin-grid-actions.js?rev=20261008"></script>
+    <script simpl-append-version="true"
+            src="~/_content/ECommerce.Module.Core/admin/common/summernote-service.js"></script>
+    <script simpl-append-version="true" src="~/_content/ECommerce.Module.Core/admin/common/st-date-range.js"></script>
+    <script simpl-append-version="true"
+            src="~/_content/ECommerce.Module.Core/admin/common/translation-service.js"></script>
+
+    <script simpl-append-version="true"
+            src="~/_content/ECommerce.Module.Core/admin/dashboard/dashboard.module.js"></script>
+
+
+    @foreach (var module in GlobalConfiguration.Modules)
+    {
+
+        var resourceStream = module.Assembly.GetManifestResourceStream($"{module.Id}.bundleconfig.json");
+        if (resourceStream == null)
+        {
+            continue;
+        }
+
+        using (var reader = new StreamReader(resourceStream))
+        {
+            string content = reader.ReadToEnd();
+            dynamic bundleConfigs = JsonConvert.DeserializeObject(content);
+            foreach (var configItems in bundleConfigs)
+            {
+                string outputFileName = configItems.outputFileName;
+                if (outputFileName.Contains("admin") && outputFileName.EndsWith(".js"))
+                {
+                    foreach (string inputFile in configItems.inputFiles)
+                    {
+                        <script simpl-append-version="true" src="~/_content/@module.Id/@inputFile.Replace("wwwroot/", "")"></script>
+                    }
+                }
+            }
+        }
+    }
+</head>
+
+<body class="admin-body">
+    <div class="admin-shell">
+        <aside class="admin-sidebar" id="adminSidebar" aria-label="Admin navigation">
+            <div class="admin-sidebar__brand">
+                <div class="admin-sidebar__brand-mark">Z</div>
+                <div>
+                    <p class="admin-sidebar__eyebrow">ECommerce</p>
+                    <a href="/admin#!/dashboard" class="admin-sidebar__title">Admin Console</a>
+                </div>
+            </div>
+
+            <div class="admin-sidebar__intro">
+                <span class="admin-sidebar__badge">@Localizer["Live workspace"]</span>
+                <p>@Localizer["A streamlined control center for catalog, sales, inventory, and publishing."]</p>
+            </div>
+
+            <nav class="admin-nav">
+                <div class="admin-nav__group">
+                    <p class="admin-nav__label">@Localizer["Overview"]</p>
+                    <a ui-sref="dashboard" ui-sref-active="is-active" data-admin-nav-link>
+                        <i class="fa fa-th-large" aria-hidden="true"></i>
+                        <span>@Localizer["Dashboard"]</span>
+                    </a>
+                </div>
+
+                @if (User.IsInRole("admin"))
+                {
+                    <div class="admin-nav__group admin-nav__group--collapsible" data-admin-nav-group>
+                        <button type="button" class="admin-nav__trigger" data-admin-nav-trigger aria-expanded="false">
+                            <span class="admin-nav__label">@Localizer["Farm Management"]</span>
+                            <i class="fa fa-angle-down" aria-hidden="true"></i>
+                        </button>
+                        <div class="admin-nav__items" data-admin-nav-items hidden>
+                            <a ui-sref="farm-orchards" ui-sref-active="is-active" data-admin-nav-link><i class="fa fa-map-marker" aria-hidden="true"></i><span>@Localizer["Orchard Directory"]</span></a>
+                            <a ui-sref="farm-advisories" ui-sref-active="is-active" data-admin-nav-link><i class="fa fa-bullhorn" aria-hidden="true"></i><span>@Localizer["Advisory Center"]</span></a>
+                            <a ui-sref="farm-operations" ui-sref-active="is-active" data-admin-nav-link><i class="fa fa-tasks" aria-hidden="true"></i><span>@Localizer["Farm Operations"]</span></a>
+                            <a ui-sref="farm-lab-reports" ui-sref-active="is-active" data-admin-nav-link><i class="fa fa-flask" aria-hidden="true"></i><span>@Localizer["Soil & Water Reports"]</span></a>
+                            <a ui-sref="farm-rules" ui-sref-active="is-active" data-admin-nav-link><i class="fa fa-sliders" aria-hidden="true"></i><span>@Localizer["Nutrient Rules"]</span></a>
+                            <a ui-sref="farm-workflow-monitor" ui-sref-active="is-active" data-admin-nav-link><i class="fa fa-shield" aria-hidden="true"></i><span>@Localizer["Workflow Monitor"]</span></a>
+                        </div>
+                    </div>
+                    <div class="admin-nav__group admin-nav__group--collapsible" data-admin-nav-group>
+                        <button type="button" class="admin-nav__trigger" data-admin-nav-trigger aria-expanded="false">
+                            <span class="admin-nav__label">@Localizer["Site"]</span>
+                            <i class="fa fa-angle-down" aria-hidden="true"></i>
+                        </button>
+                        <div class="admin-nav__items" data-admin-nav-items hidden>
+                            <a ui-sref="users" ui-sref-active="is-active" data-admin-nav-link><i class="fa fa-users"
+                                                                                                     aria-hidden="true"></i><span>@Localizer["Users"]</span></a>
+                                <a ui-sref="vendors" ui-sref-active="is-active" data-admin-nav-link><i class="fa fa-briefcase"
+                                                                                                           aria-hidden="true"></i><span>@Localizer["Vendors"]</span></a>
+                                    <a ui-sref="customergroups" ui-sref-active="is-active" data-admin-nav-link><i
+                                        class="fa fa-object-group" aria-hidden="true"></i><span>@Localizer["Customer Groups"]</span></a>
+                                        <a ui-sref="reviews" ui-sref-active="is-active" data-admin-nav-link><i class="fa fa-star-half-o"
+                                                                                                                   aria-hidden="true"></i><span>@Localizer["Reviews"]</span></a>
+                                            <a ui-sref="review-replies" ui-sref-active="is-active" data-admin-nav-link><i
+                                                class="fa fa-comments-o" aria-hidden="true"></i><span>@Localizer["Review Replies"]</span></a>
+                                                <a ui-sref="comments" ui-sref-active="is-active" data-admin-nav-link><i
+                                                    class="fa fa-commenting-o"
+                                                    aria-hidden="true"></i><span>@Localizer["Comments"]</span></a>
+                                                    <a ui-sref="contact-area" ui-sref-active="is-active" data-admin-nav-link><i
+                                                        class="fa fa-map-marker" aria-hidden="true"></i><span>@Localizer["Contact Areas"]</span></a>
+                                                        <a ui-sref="contact" ui-sref-active="is-active" data-admin-nav-link><i class="fa fa-envelope-o"
+                                                                                                                                   aria-hidden="true"></i><span>@Localizer["Contacts"]</span></a>
+                                                        </div>
+                                                    </div>
+                                                }
+
+                                                <div class="admin-nav__group admin-nav__group--collapsible" data-admin-nav-group>
+                                                    <button type="button" class="admin-nav__trigger" data-admin-nav-trigger aria-expanded="false">
+                                                        <span class="admin-nav__label">@Localizer["Catalog"]</span>
+                                                        <i class="fa fa-angle-down" aria-hidden="true"></i>
+                                                    </button>
+                                                    <div class="admin-nav__items" data-admin-nav-items hidden>
+                                                        <a ui-sref="product" ui-sref-active="is-active" data-admin-nav-link><i class="fa fa-cube"
+                                                                                                                                   aria-hidden="true"></i><span>@Localizer["Products"]</span></a>
+                                                            <a ui-sref="product-prices" ui-sref-active="is-active" data-admin-nav-link><i class="fa fa-tags"
+                                                                                                                                              aria-hidden="true"></i><span>@Localizer["Product Prices"]</span></a>
+                                                                @if (User.IsInRole("admin"))
+                                                                {
+                                                                    <a ui-sref="category" ui-sref-active="is-active" data-admin-nav-link><i class="fa fa-sitemap"
+                                                                                                                                                aria-hidden="true"></i><span>@Localizer["Categories"]</span></a>
+                                                                        <a ui-sref="brand" ui-sref-active="is-active" data-admin-nav-link><i class="fa fa-diamond"
+                                                                                                                                                 aria-hidden="true"></i><span>@Localizer["Brands"]</span></a>
+                                                                            <a ui-sref="product-option" ui-sref-active="is-active" data-admin-nav-link><i
+                                                                                class="fa fa-sliders" aria-hidden="true"></i><span>@Localizer["Product Options"]</span></a>
+                                                                                <a ui-sref="product-attribute-group" ui-sref-active="is-active" data-admin-nav-link><i
+                                                                                    class="fa fa-folder-open-o" aria-hidden="true"></i><span>@Localizer["Attribute Groups"]</span></a>
+                                                                                    <a ui-sref="product-attribute" ui-sref-active="is-active" data-admin-nav-link><i
+                                                                                        class="fa fa-list-alt" aria-hidden="true"></i><span>@Localizer["Attributes"]</span></a>
+                                                                                        <a ui-sref="product-template" ui-sref-active="is-active" data-admin-nav-link><i
+                                                                                            class="fa fa-clone" aria-hidden="true"></i><span>@Localizer["Templates"]</span></a>
+                                                                                        }
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <div class="admin-nav__group admin-nav__group--collapsible" data-admin-nav-group>
+                                                                                    <button type="button" class="admin-nav__trigger" data-admin-nav-trigger aria-expanded="false">
+                                                                                        <span class="admin-nav__label">@Localizer["Operations"]</span>
+                                                                                        <i class="fa fa-angle-down" aria-hidden="true"></i>
+                                                                                    </button>
+                                                                                    <div class="admin-nav__items" data-admin-nav-items hidden>
+                                                                                        <a ui-sref="order" ui-sref-active="is-active" data-admin-nav-link><i class="fa fa-shopping-bag"
+                                                                                                                                                                 aria-hidden="true"></i><span>@Localizer["Orders"]</span></a>
+                                                                                            <a ui-sref="shipments" ui-sref-active="is-active" data-admin-nav-link><i class="fa fa-truck"
+                                                                                                                                                                         aria-hidden="true"></i><span>@Localizer["Shipments"]</span></a>
+                                                                                                <a ui-sref="stocks" ui-sref-active="is-active" data-admin-nav-link><i class="fa fa-line-chart"
+                                                                                                                                                                          aria-hidden="true"></i><span>@Localizer["Stocks"]</span></a>
+                                                                                                    <a ui-sref="warehouses" ui-sref-active="is-active" data-admin-nav-link><i
+                                                                                                        class="fa fa-building-o"
+                                                                                                        aria-hidden="true"></i><span>@Localizer["Warehouses"]</span></a>
+                                                                                                        <a ui-sref="warehouse-manage-products" ui-sref-active="is-active" data-admin-nav-link><i
+                                                                                                            class="fa fa-archive" aria-hidden="true"></i><span>@Localizer["Warehouse Products"]</span></a>
+                                                                                                        </div>
+                                                                                                    </div>
+
+                                                                                                    @if (User.IsInRole("admin"))
+                                                                                                    {
+                                                                                                        <div class="admin-nav__group admin-nav__group--collapsible" data-admin-nav-group>
+                                                                                                            <button type="button" class="admin-nav__trigger" data-admin-nav-trigger aria-expanded="false">
+                                                                                                                <span class="admin-nav__label">@Localizer["Growth"]</span>
+                                                                                                                <i class="fa fa-angle-down" aria-hidden="true"></i>
+                                                                                                            </button>
+                                                                                                            <div class="admin-nav__items" data-admin-nav-items hidden>
+                                                                                                                <a ui-sref="cart-rules" ui-sref-active="is-active" data-admin-nav-link><i class="fa fa-bolt"
+                                                                                                                                                                                              aria-hidden="true"></i><span>@Localizer["Cart Price Rules"]</span></a>
+                                                                                                                    <a ui-sref="cart-rule-usages" ui-sref-active="is-active" data-admin-nav-link><i
+                                                                                                                        class="fa fa-bar-chart" aria-hidden="true"></i><span>@Localizer["Rule Usage"]</span></a>
+                                                                                                                        <a ui-sref="page" ui-sref-active="is-active" data-admin-nav-link><i class="fa fa-file-text-o"
+                                                                                                                                                                                                aria-hidden="true"></i><span>@Localizer["Pages"]</span></a>
+                                                                                                                            <a ui-sref="menus" ui-sref-active="is-active" data-admin-nav-link><i class="fa fa-bars"
+                                                                                                                                                                                                     aria-hidden="true"></i><span>@Localizer["Menus"]</span></a>
+                                                                                                                                <a ui-sref="widget" ui-sref-active="is-active" data-admin-nav-link><i class="fa fa-th"
+                                                                                                                                                                                                          aria-hidden="true"></i><span>@Localizer["Widgets"]</span></a>
+                                                                                                                                    <a ui-sref="news-categories" ui-sref-active="is-active" data-admin-nav-link><i
+                                                                                                                                        class="fa fa-newspaper-o" aria-hidden="true"></i><span>@Localizer["News Categories"]</span></a>
+                                                                                                                                        <a ui-sref="news-items" ui-sref-active="is-active" data-admin-nav-link><i class="fa fa-bullhorn"
+                                                                                                                                                                                                                      aria-hidden="true"></i><span>@Localizer["News Items"]</span></a>
+                                                                                                                                        </div>
+                                                                                                                                    </div>
+
+                                                                                                                                    <div class="admin-nav__group admin-nav__group--collapsible" data-admin-nav-group>
+                                                                                                                                        <button type="button" class="admin-nav__trigger" data-admin-nav-trigger aria-expanded="false">
+                                                                                                                                            <span class="admin-nav__label">@Localizer["System"]</span>
+                                                                                                                                            <i class="fa fa-angle-down" aria-hidden="true"></i>
+                                                                                                                                        </button>
+                                                                                                                                        <div class="admin-nav__items" data-admin-nav-items hidden>
+                                                                                                                                                <a ui-sref="countries" ui-sref-active="is-active" data-admin-nav-link><i class="fa fa-globe"
+                                                                                                                                                                                                                             aria-hidden="true"></i><span>@Localizer["Countries"]</span></a>
+                                                                                                                                                    <a ui-sref="states-provinces" ui-sref-active="is-active" data-admin-nav-link><i
+                                                                                                                                                        class="fa fa-map-o" aria-hidden="true"></i><span>@Localizer["States or Provinces"]</span></a>
+                                                                                                                                                        <a ui-sref="tax-classes" ui-sref-active="is-active" data-admin-nav-link><i class="fa fa-percent"
+                                                                                                                                                                                                                                       aria-hidden="true"></i><span>@Localizer["Tax Classes"]</span></a>
+                                                                                                                                                            <a ui-sref="tax-rates" ui-sref-active="is-active" data-admin-nav-link><i
+                                                                                                                                                                class="fa fa-calculator" aria-hidden="true"></i><span>@Localizer["Tax Rates"]</span></a>
+                                                                                                                                                                <a ui-sref="shipping-providers" ui-sref-active="is-active" data-admin-nav-link><i
+                                                                                                                                                                    class="fa fa-paper-plane-o" aria-hidden="true"></i><span>@Localizer["Shipping Providers"]</span></a>
+                                                                                                                                                                    <a ui-sref="payment-providers" ui-sref-active="is-active" data-admin-nav-link><i
+                                                                                                                                                                        class="fa fa-credit-card" aria-hidden="true"></i><span>@Localizer["Payment Providers"]</span></a>
+                                                                                                                                                                        <a ui-sref="configuration" ui-sref-active="is-active" data-admin-nav-link><i class="fa fa-cogs"
+                                                                                                                                                                                                                                                         aria-hidden="true"></i><span>@Localizer["Settings"]</span></a>
+                                                                                                                                                                            <a ui-sref="localization" ui-sref-active="is-active" data-admin-nav-link><i
+                                                                                                                                                                                class="fa fa-language"
+                                                                                                                                                                                aria-hidden="true"></i><span>@Localizer["Translations"]</span></a>
+                                                                                                                                                                            </div>
+                                                                                                                                                                        </div>
+                                                                                                                                                                    }
+                                                                                                                                                                </nav>
+                                                                                                                                                            </aside>
+
+                                                                                                                                                            <button type="button" class="admin-shell__overlay" data-admin-nav-close aria-label="Close navigation"></button>
+
+                                                                                                                                                            <main class="admin-main">
+                                                                                                                                                                <header class="admin-topbar">
+                                                                                                                                                                    <div class="admin-topbar__title-wrap">
+                                                                                                                                                                        <button type="button" class="admin-topbar__toggle" data-admin-nav-toggle
+                                                                                                                                                                                aria-controls="adminSidebar" aria-expanded="false">
+                                                                                                                                                                            <span></span>
+                                                                                                                                                                            <span></span>
+                                                                                                                                                                            <span></span>
+                                                                                                                                                                        </button>
+                                                                                                                                                                        <div>
+                                                                                                                                                                            <p class="admin-topbar__eyebrow">@Localizer["Operations cockpit"]</p>
+                                                                                                                                                                            <h1 class="admin-topbar__title">@Localizer["Manage your storefront with clarity"]</h1>
+                                                                                                                                                                        </div>
+                                                                                                                                                                    </div>
+
+                                                                                                                                                                    <div class="admin-topbar__actions">
+                                                                                                                                                                        <a ui-sref="account" href="~/admin#!/account" title="Account settings"
+                                                                                                                                                                           class="admin-user-pill">
+                                                                                                                                                                            <span class="admin-user-pill__avatar">@userInitials</span>
+                                                                                                                                                                            <span class="admin-user-pill__text">
+                                                                                                                                                                                <strong>@currentUserName</strong>
+                                                                                                                                                                                <small>@Localizer["Account settings"]</small>
+                                                                                                                                                                            </span>
+                                                                                                                                                                        </a>
+                                                                                                                                                                        <form asp-area="Core" asp-controller="AdminAccount" asp-action="LogOff" method="post"
+                                                                                                                                                                              id="logoutForm" class="admin-topbar__logout">
+                                                                                                                                                                            <button type="submit" class="btn btn-default admin-logout-button">
+                                                                                                                                                                                <i class="fa fa-sign-out" aria-hidden="true"></i>
+                                                                                                                                                                                <span>@Localizer["Log off"]</span>
+                                                                                                                                                                            </button>
+                                                                                                                                                                        </form>
+                                                                                                                                                                    </div>
+                                                                                                                                                                </header>
+
+                                                                                                                                                                <div class="admin-main__content">
+                                                                                                                                                                    <div class="ui-view-content" ui-view></div>
+                                                                                                                                                                    <footer class="admin-footer">
+                                                                                                                                                                        <p>&copy; @DateTime.Now.Year ECommerce</p>
+                                                                                                                                                                        <p>@Localizer["Powered by CodeStrix"]</p>
+                                                                                                                                                                    </footer>
+                                                                                                                                                                </div>
+                                                                                                                                                            </main>
+                                                                                                                                                        </div>
+
+                                                                                                                                                        <script>
+                                                                                                                                                            (function () {
+                                                                                                                                                            var body = document.body;
+                                                                                                                                                            var toggle = document.querySelector('[data-admin-nav-toggle]');
+                                                                                                                                                            var closeItems = document.querySelectorAll('[data-admin-nav-close], [data-admin-nav-link]');
+                                                                                                                                                            var navGroups = document.querySelectorAll('[data-admin-nav-group]');
+
+                                                                                                                                                            if (!toggle) {
+                                                                                                                                                            return;
+                                                                                                                                                            }
+
+                                                                                                                                                            var setGroupExpandedState = function (group, isExpanded) {
+                                                                                                                                                            var trigger = group.querySelector('[data-admin-nav-trigger]');
+                                                                                                                                                            var items = group.querySelector('[data-admin-nav-items]');
+
+                                                                                                                                                            group.classList.toggle('is-collapsed', !isExpanded);
+
+                                                                                                                                                            if (trigger) {
+                                                                                                                                                            trigger.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+                                                                                                                                                            }
+
+                                                                                                                                                            if (items) {
+                                                                                                                                                            items.hidden = !isExpanded;
+                                                                                                                                                            }
+                                                                                                                                                            };
+
+                                                                                                                                                            var openActiveGroups = function () {
+                                                                                                                                                            Array.prototype.forEach.call(navGroups, function (group) {
+                                                                                                                                                            if (group.querySelector('a.is-active, a.ui-sref-active, a.ui-sref-active-eq')) {
+                                                                                                                                                            setGroupExpandedState(group, true);
+                                                                                                                                                            }
+                                                                                                                                                            });
+                                                                                                                                                            };
+
+                                                                                                                                                            Array.prototype.forEach.call(navGroups, function (group) {
+                                                                                                                                                            var trigger = group.querySelector('[data-admin-nav-trigger]');
+
+                                                                                                                                                            setGroupExpandedState(group, false);
+
+                                                                                                                                                            if (!trigger) {
+                                                                                                                                                            return;
+                                                                                                                                                            }
+
+                                                                                                                                                            trigger.addEventListener('click', function () {
+                                                                                                                                                            setGroupExpandedState(group, group.classList.contains('is-collapsed'));
+                                                                                                                                                            });
+                                                                                                                                                            });
+
+                                                                                                                                                            var setExpandedState = function (isOpen) {
+                                                                                                                                                            body.classList.toggle('admin-nav-open', isOpen);
+                                                                                                                                                            toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                                                                                                                                                            };
+
+                                                                                                                                                            toggle.addEventListener('click', function () {
+                                                                                                                                                            setExpandedState(!body.classList.contains('admin-nav-open'));
+                                                                                                                                                            });
+
+                                                                                                                                                            Array.prototype.forEach.call(closeItems, function (item) {
+                                                                                                                                                            item.addEventListener('click', function () {
+                                                                                                                                                            window.setTimeout(openActiveGroups, 0);
+
+                                                                                                                                                            if (window.innerWidth < 992) {
+                                                                                                                                                            setExpandedState(false);
+                                                                                                                                                            }
+                                                                                                                                                            });
+                                                                                                                                                            });
+
+                                                                                                                                                            openActiveGroups();
+
+                                                                                                                                                            window.addEventListener('resize', function () {
+                                                                                                                                                            if (window.innerWidth >= 992) {
+                                                                                                                                                            setExpandedState(false);
+                                                                                                                                                            }
+                                                                                                                                                            });
+                                                                                                                                                            }());
+                                                                                                                                                        </script>
+                                                                                                                                                        <script simpl-append-version="true" src="~/js/button-icons.js"></script>
+                                                                                                                                                    </body>
+
+                                                                                                                                                </html>

@@ -1,0 +1,89 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <UserSecretsId>aspnet-Modular.WebHost-dca604fa-ee10-4a6c-8e7d-8cc79dca8c8f</UserSecretsId>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
+    <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="wwwroot\**\*;modules.json;Modules\**\*;Themes\**\*;Views\**\*">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Modules\ECommerce.Module.ActivityLog\ECommerce.Module.ActivityLog.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.Catalog\ECommerce.Module.Catalog.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.Cms\ECommerce.Module.Cms.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.Comments\ECommerce.Module.Comments.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.Contacts\ECommerce.Module.Contacts.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.DinkToPdf\ECommerce.Module.DinkToPdf.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.Discussion\ECommerce.Module.Discussion.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.HangfireJobs\ECommerce.Module.HangfireJobs.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.Inventory\ECommerce.Module.Inventory.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.News\ECommerce.Module.News.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.Notifications\ECommerce.Module.Notifications.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.Orders\ECommerce.Module.Orders.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.PaymentCoD\ECommerce.Module.PaymentCoD.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.PaymentRazor\ECommerce.Module.PaymentRazor.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.Payments\ECommerce.Module.Payments.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.Pricing\ECommerce.Module.Pricing.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.ProductComparison\ECommerce.Module.ProductComparison.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.ProductRecentlyViewed\ECommerce.Module.ProductRecentlyViewed.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.Reviews\ECommerce.Module.Reviews.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.SampleData\ECommerce.Module.SampleData.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.Search\ECommerce.Module.Search.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.Shipments\ECommerce.Module.Shipments.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.ShippingFree\ECommerce.Module.ShippingFree.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.ShippingPrices\ECommerce.Module.ShippingPrices.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.ShippingTableRate\ECommerce.Module.ShippingTableRate.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.Shipping\ECommerce.Module.Shipping.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.ShoppingCart\ECommerce.Module.ShoppingCart.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.Checkouts\ECommerce.Module.Checkouts.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.SignalR\ECommerce.Module.SignalR.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.StorageCloudinary\ECommerce.Module.StorageCloudinary.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.StorageLocal\ECommerce.Module.StorageLocal.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.Tax\ECommerce.Module.Tax.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.Vendors\ECommerce.Module.Vendors.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.WishList\ECommerce.Module.WishList.csproj" />
+    <ProjectReference Include="..\ECommerce.Infrastructure\ECommerce.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.Core\ECommerce.Module.Core.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.Localization\ECommerce.Module.Localization.csproj" />
+
+    <ProjectReference Include="..\Modules\ECommerce.Module.EmailSenderSmtp\ECommerce.Module.EmailSenderSmtp.csproj" />
+    <ProjectReference Include="..\Modules\ECommerce.Module.PaymentBuyOnCredit\ECommerce.Module.PaymentBuyOnCredit.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
+    <PackageReference Include="Microsoft.AspNetCore.Antiforgery" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="7.0.0" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="7.0.1" />
+    <PackageReference Include="Serilog.Sinks.RollingFile" Version="3.3.1-dev-00771" />
+    <PackageReference Include="Humanizer" Version="2.14.1" />
+    <PackageReference Include="MediatR" Version="12.1.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="modules.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>

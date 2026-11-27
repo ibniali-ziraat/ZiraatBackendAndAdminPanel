@@ -1,0 +1,50 @@
+﻿<div class="page-header">
+    <div class="row">
+        <div class="col-md-8">
+            <h2>{{ ::vm.translate.get('Contact Areas')}}</h2>
+        </div>
+        <div class="col-md-4 text-right">
+            <a ui-sref="contact-area-create" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span>{{ ::vm.translate.get('Create Contact Area')}} </a>
+        </div>
+    </div>
+</div>
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>{{ ::vm.translate.get('Name')}}</th>
+        <th>{{ ::vm.translate.get('Actions')}}</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="contactArea in vm.contactAreas">
+        <td>{{contactArea.name}}</td>
+        <td class="text-center">
+            <div class="dropdown" style="display:inline-block">
+                <button class="btn btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-cog"></i> <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li>
+                        <a ui-sref="contact-area-edit({id: contactArea.id})">
+                            <span class="glyphicon glyphicon-pencil"></span> {{::vm.translate.get('Edit')}}
+                        </a>
+                    </li>
+                    <li ng-if="vm.enableCultures.length > 0" role="separator" class="divider"></li>
+                    <li ng-repeat="culture in vm.enableCultures">
+                        <a ui-sref="contact-area-translation({id: contactArea.id, culture: culture})">
+                            <span class="flag flag-{{culture.substr(culture.length - 2).toLowerCase()}}"></span> {{culture}}
+                        </a>
+                    </li>
+                    <li role="separator" class="divider"></li>
+                    <li>
+                        <a href ng-click="vm.deleteContactArea(contactArea)" style="color:#c0392b">
+                            <span class="glyphicon glyphicon-remove"></span> {{::vm.translate.get('Delete')}}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>

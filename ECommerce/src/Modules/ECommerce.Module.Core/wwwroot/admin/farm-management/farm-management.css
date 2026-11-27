@@ -1,0 +1,120 @@
+.farm-workspace { color: #24312e; padding: 20px; width: 100%; max-width: 1440px; margin: auto; letter-spacing: 0; overflow-x: hidden; }
+.farm-workspace h1 { font-size: 26px; margin: 0; }
+.farm-workspace h2 { font-size: 20px; margin: 0; }
+.farm-workspace h3 { font-size: 16px; }
+.farm-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+.farm-toolbar form, .farm-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.farm-workspace .form-control { max-width: 100%; border-radius: 4px; }
+.farm-workspace .btn { border-radius: 4px; white-space: normal; }
+.farm-workspace .table { background: #fff; margin: 0; }
+.farm-workspace th { background: #eaf0ef; }
+.farm-workspace td, .farm-workspace th { vertical-align: middle !important; overflow-wrap: anywhere; max-width: 340px; }
+.farm-workspace .table-responsive { border: 1px solid #d6dfdc; display: block; width: 100%; max-width: 100%; min-width: 0; overflow-x: auto; contain: inline-size; }
+.farm-workspace .farm-state { padding: 20px 0; color: #56635f; }
+.farm-workspace .farm-status { font-weight: 600; color: #35654e; text-transform: capitalize; }
+.farm-workspace .farm-overdue { color: #a02c36; }
+.farm-editor { border-top: 2px solid #bdceca; margin-top: 26px; padding-top: 20px; }
+.farm-editor-backdrop { position: fixed; inset: 0; z-index: 1050; display: flex; align-items: center; justify-content: center; overflow-y: auto; padding: 5vh 20px; background: rgba(22, 34, 30, .58); }
+.farm-editor-backdrop .farm-editor { width: min(1100px, 100%); max-height: 90vh; overflow-y: auto; margin: 0 auto; padding: 22px; border: 1px solid #bdceca; border-top: 3px solid #168657; border-radius: 6px; background: #fff; box-shadow: 0 18px 55px rgba(0, 0, 0, .24); }
+.farm-editor-backdrop.farm-editor-page { position: static; display: block; overflow: visible; padding: 0; background: transparent; }
+.farm-editor-page .farm-editor { width: 100%; max-height: none; overflow: visible; margin: 0; padding: 0; border: 0; border-top: 0; border-radius: 0; box-shadow: none; }
+.farm-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 24px; }
+.farm-form-grid .farm-wide { grid-column: 1 / -1; }
+.farm-workspace label { display: block; font-weight: 600; }
+.farm-workspace textarea { resize: vertical; min-height: 120px; }
+.farm-workspace fieldset { min-width: 0; border: 0; padding: 0; margin: 0; }
+.farm-targets { margin: 20px 0; border-top: 1px solid #d6dfdc; padding-top: 16px; }
+.farm-targets label { display: flex; gap: 10px; align-items: center; font-weight: normal; margin: 0; }
+.farm-targets input[type=checkbox] { width: 18px; height: 18px; flex-shrink: 0; }
+.farm-selection { display: flex; gap: 8px; flex-wrap: wrap; padding: 8px 0; }
+.farm-selection span { padding: 4px 8px; background: #eaf0ef; overflow-wrap: anywhere; max-width: 100%; }
+.farm-pagination { margin: 14px 0; display: flex; justify-content: flex-end; align-items: center; gap: 12px; }
+.farm-icon { width: 36px; height: 34px; padding: 6px !important; }
+.farm-tabs { margin-top: 20px; }
+.farm-readonly { white-space: pre-wrap; overflow-wrap: anywhere; padding: 12px 0; }
+.farm-warning { color: #8c3b18; background: #fff2da; padding: 12px; margin: 12px 0; }
+.farm-detail-grid { display: grid; grid-template-columns: minmax(130px, 180px) minmax(0, 1fr); gap: 8px 18px; }
+.farm-detail-grid dt { color: #56635f; }.farm-detail-grid dd { margin: 0; overflow-wrap: anywhere; }
+.farm-admin { width: 100%; max-width: 1440px; margin: 0 auto; padding: 20px; color: #24312e; letter-spacing: 0; }
+.farm-admin__header { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px solid #d6dfdc; }
+.farm-admin__header h1, .farm-admin__header h2 { margin: 2px 0 6px; font-size: 26px; line-height: 1.25; }
+.farm-admin__header p { margin: 0; color: #64716d; max-width: 760px; }
+.farm-admin__eyebrow { color: #168657 !important; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+.farm-admin__panel { min-width: 0; margin-bottom: 22px; padding: 20px; border: 1px solid #d6dfdc; border-radius: 6px; background: #fff; }
+.farm-admin__panel h3 { margin: 0 0 16px; font-size: 17px; }
+.farm-admin__panel-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+.farm-admin__panel-header h3 { margin: 0; }
+.farm-admin__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; align-items: start; }
+.farm-form { display: grid; gap: 16px; }
+.farm-form__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.farm-field { min-width: 0; }
+.farm-field--wide { grid-column: 1 / -1; }
+.farm-field label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: #35423e; }
+.farm-field .form-control { width: 100%; max-width: none; border-radius: 4px; }
+.farm-field textarea.form-control { min-height: 100px; resize: vertical; }
+.farm-form__actions { display: flex; justify-content: flex-end; align-items: center; gap: 8px; padding-top: 4px; }
+.farm-admin .btn { border-radius: 4px; }
+.farm-admin .table { margin: 0; background: #fff; }
+.farm-admin .table th { background: #eaf0ef; color: #35423e; font-size: 12px; text-transform: uppercase; }
+.farm-admin .table td, .farm-admin .table th { padding: 11px 12px !important; vertical-align: middle !important; overflow-wrap: anywhere; }
+.farm-admin .table-responsive { width: 100%; margin: 0; border: 1px solid #d6dfdc; border-radius: 4px; overflow-x: auto; }
+.farm-empty { margin: 0; padding: 28px 16px; color: #64716d; text-align: center; }
+.farm-muted { color: #64716d; font-size: 12px; }
+.farm-name { display: block; font-weight: 600; color: #24312e; }
+.farm-status-badge { display: inline-flex; align-items: center; min-height: 24px; padding: 3px 8px; border-radius: 12px; background: #eaf0ef; color: #35654e; font-size: 12px; font-weight: 700; text-transform: capitalize; }
+.farm-status-badge--draft { background: #fff2da; color: #8c5a18; }
+.farm-status-badge--revoked, .farm-status-badge--rejected, .farm-status-badge--cancelled { background: #fbe9eb; color: #9b2c38; }
+.farm-tabs-nav { display: flex; gap: 4px; margin: 0 0 22px; padding: 4px; border-bottom: 1px solid #d6dfdc; overflow-x: auto; }
+.farm-tab { display: inline-flex; align-items: center; gap: 8px; min-height: 42px; padding: 9px 14px; border: 0; border-bottom: 3px solid transparent; background: transparent; color: #56635f; white-space: nowrap; }
+.farm-tab.is-active { border-bottom-color: #168657; color: #155c40; font-weight: 700; }
+.farm-tab__count { min-width: 22px; padding: 2px 6px; border-radius: 11px; background: #eaf0ef; text-align: center; font-size: 11px; }
+.farm-check-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.farm-check { display: flex; align-items: flex-start; gap: 8px; margin: 0; padding: 9px; border: 1px solid #d6dfdc; border-radius: 4px; font-weight: normal !important; }
+.farm-check input { margin-top: 2px; }
+.farm-workflow-grid { grid-template-columns: minmax(380px, 2fr) minmax(0, 3fr); gap: 24px; }
+.farm-workflow-table { min-width: 760px; table-layout: fixed; }
+.farm-workflow-table th:nth-child(1) { width: 16%; }
+.farm-workflow-table th:nth-child(2) { width: 15%; }
+.farm-workflow-table th:nth-child(3) { width: 34%; }
+.farm-workflow-table th:nth-child(4) { width: 17%; }
+.farm-workflow-table th:nth-child(5) { width: 9%; }
+.farm-workflow-table th:nth-child(6) { width: 9%; }
+.farm-workflow-table td, .farm-workflow-table th { overflow-wrap: normal !important; word-break: normal; }
+.farm-workflow-table td:nth-child(3) { line-height: 1.5; }
+.farm-workflow-table .btn { white-space: nowrap; }
+.farm-check input[type="checkbox"] { flex: 0 0 16px; width: 16px; height: 16px; margin-right: 0; }
+@media (max-width: 1150px) {
+    .farm-workflow-grid { grid-template-columns: minmax(0, 1fr); }
+}
+.farm-reading { display: grid; grid-template-columns: minmax(130px, 1fr) minmax(100px, .7fr) minmax(100px, .7fr) 36px; gap: 8px; align-items: end; margin-bottom: 10px; }
+.farm-reading .btn { width: 36px; height: 34px; padding: 6px; }
+.farm-rule-list { display: grid; gap: 12px; }
+.farm-rule-item { padding: 14px; border: 1px solid #d6dfdc; border-radius: 4px; }
+.farm-rule-item__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+@media (max-width: 640px) {
+    .farm-workspace { padding: 12px 4px; }
+    .farm-editor-backdrop { padding: 12px 6px; }
+    .farm-editor-backdrop .farm-editor { max-height: calc(100vh - 24px); padding: 14px; }
+    .farm-form-grid { grid-template-columns: minmax(0, 1fr); }
+    .farm-toolbar, .farm-toolbar form { min-width: 0; width: 100%; }
+    .farm-toolbar input { flex: 1; min-width: 0; width: 150px; }
+    .farm-workspace .table { min-width: 0; width: 100%; font-size: 13px; }
+    .farm-workspace .farm-mobile-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+    .farm-workspace .farm-mobile-table, .farm-workspace .farm-mobile-table tbody, .farm-workspace .farm-mobile-table tr, .farm-workspace .farm-mobile-table td { display: block; }
+    .farm-workspace .farm-mobile-table tr { border-bottom: 1px solid #bdceca; padding: 7px; }
+    .farm-workspace .farm-mobile-table tr:last-child { border-bottom: 0; }
+    .farm-workspace .farm-mobile-table td { display: grid; grid-template-columns: minmax(90px, 34%) minmax(0, 1fr); gap: 8px; border: 0; padding: 5px !important; max-width: none; }
+    .farm-workspace .farm-mobile-table td::before { content: attr(data-label); color: #56635f; font-weight: 600; }
+    .farm-detail-grid { grid-template-columns: 1fr; }.farm-detail-grid dd { margin-bottom: 8px; }
+    .farm-admin { padding: 12px 4px; }
+    .farm-admin__header { margin-bottom: 18px; }
+    .farm-admin__grid, .farm-form__grid { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+    .farm-field--wide { grid-column: auto; }
+    .farm-admin__panel { padding: 14px; margin-bottom: 14px; }
+    .farm-reading { grid-template-columns: minmax(0, 1fr) minmax(85px, .6fr) 36px; }
+    .farm-reading .farm-reading__unit { grid-column: 1 / 3; }
+    .farm-check-grid { grid-template-columns: 1fr; }
+    .farm-workflow-table { min-width: 0; table-layout: auto; }
+    .farm-form__actions { justify-content: stretch; }
+    .farm-form__actions .btn { flex: 1; }
+}

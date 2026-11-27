@@ -1,0 +1,494 @@
+/*================================================================
+    QUICK CSS REFERENCE GUIDE
+    Copy & Paste Ready Snippets for Modern Theme
+================================================================*/
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+
+/* Primary Button */
+.btn-custom-primary {
+    background: var(--gradient-primary);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-lg);
+    border: none;
+    cursor: pointer;
+    transition: var(--transition-base);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-custom-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Outlined Button */
+.btn-custom-outline {
+    border: 2px solid var(--color-primary);
+    color: var(--color-primary);
+    background: transparent;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: var(--transition-base);
+}
+
+.btn-custom-outline:hover {
+    background: var(--color-primary);
+    color: white;
+}
+
+/* ============================================================
+   CARDS
+   ============================================================ */
+
+/* Modern Card */
+.card-custom {
+    background: var(--color-bg-primary);
+    border: none;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    transition: var(--transition-base);
+}
+
+.card-custom:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-xl);
+}
+
+/* Glass Card */
+.card-glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-glass);
+}
+
+/* ============================================================
+   TEXT STYLES
+   ============================================================ */
+
+/* Gradient Text */
+.text-gradient {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Gradient Text Secondary */
+.text-gradient-secondary {
+    background: var(--gradient-secondary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ============================================================
+   BADGES
+   ============================================================ */
+
+/* Badge Primary */
+.badge-custom {
+    display: inline-block;
+    background: var(--gradient-primary);
+    color: white;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-lg);
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+/* Badge Secondary */
+.badge-secondary-custom {
+    display: inline-block;
+    background: var(--gradient-secondary);
+    color: white;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-lg);
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+/* ============================================================
+   ALERTS
+   ============================================================ */
+
+/* Alert Success */
+.alert-success-custom {
+    background: rgba(16, 185, 129, 0.1);
+    border-left: 4px solid var(--color-success);
+    color: #065f46;
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius-lg);
+    animation: slideInDown 0.3s ease-out;
+}
+
+/* Alert Danger */
+.alert-danger-custom {
+    background: rgba(239, 68, 68, 0.1);
+    border-left: 4px solid var(--color-danger);
+    color: #7f1d1d;
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius-lg);
+    animation: slideInDown 0.3s ease-out;
+}
+
+/* ============================================================
+   CONTAINERS
+   ============================================================ */
+
+/* Glass Container */
+.container-glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-2xl);
+    padding: 2rem;
+    box-shadow: var(--shadow-glass);
+}
+
+/* Frosted Panel */
+.panel-frosted {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--radius-xl);
+    padding: 1.5rem;
+}
+
+/* ============================================================
+   FORMS
+   ============================================================ */
+
+/* Modern Input */
+.input-modern {
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    transition: var(--transition-fast);
+    background: var(--color-bg-primary);
+    color: var(--color-text-primary);
+}
+
+.input-modern:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* ============================================================
+   HOVER EFFECTS
+   ============================================================ */
+
+/* Hover Scale Small */
+.hover-scale-small-custom {
+    transition: transform 0.2s ease-out;
+    cursor: pointer;
+}
+
+.hover-scale-small-custom:hover {
+    transform: scale(1.05);
+}
+
+/* Hover Lift */
+.hover-lift-custom {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift-custom:hover {
+    transform: translateY(-8px);
+}
+
+/* Hover Glow */
+.hover-glow-custom {
+    transition: all 0.3s ease-out;
+}
+
+.hover-glow-custom:hover {
+    box-shadow: 0 0 30px rgba(102, 126, 234, 0.4);
+}
+
+/* ============================================================
+   SHADOWS
+   ============================================================ */
+
+/* Shadow Small */
+.shadow-custom-sm {
+    box-shadow: var(--shadow-sm);
+}
+
+/* Shadow Medium */
+.shadow-custom-md {
+    box-shadow: var(--shadow-md);
+}
+
+/* Shadow Large */
+.shadow-custom-lg {
+    box-shadow: var(--shadow-lg);
+}
+
+/* Shadow Extra Large */
+.shadow-custom-xl {
+    box-shadow: var(--shadow-xl);
+}
+
+/* Shadow Glass */
+.shadow-custom-glass {
+    box-shadow: var(--shadow-glass);
+}
+
+/* ============================================================
+   SPACING HELPERS
+   ============================================================ */
+
+/* Gap Utilities */
+.gap-sm { gap: 0.5rem; }
+.gap-md { gap: 1rem; }
+.gap-lg { gap: 1.5rem; }
+.gap-xl { gap: 2rem; }
+
+/* ============================================================
+   ANIMATIONS - READY TO USE
+   ============================================================ */
+
+/* Usage: <div class="fade-in">Content</div> */
+/* Available: fade-in, slide-in-up, zoom-in, bounce-in */
+
+/* Usage: <div class="hover-lift">Content</div> */
+/* Available: hover-lift, hover-glow, hover-scale, hover-rotate */
+
+/* Usage: <div class="spinner-circle"></div> */
+/* Modern spinning loader */
+
+/* ============================================================
+   RESPONSIVE GRID
+   ============================================================ */
+
+/* Responsive Product Grid */
+.grid-responsive {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 2rem;
+}
+
+@media (max-width: 768px) {
+    .grid-responsive {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .grid-responsive {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+
+/* Flexbox Center */
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Absolute Center */
+.absolute-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Full Width */
+.full-width {
+    width: 100%;
+}
+
+/* Max Width Container */
+.max-width-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* ============================================================
+   ICON ENHANCEMENTS
+   ============================================================ */
+
+/* Gradient Icon */
+.icon-gradient {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 1.5rem;
+}
+
+/* Spinning Icon */
+.icon-spin {
+    animation: spin 1s linear infinite;
+}
+
+/* Pulsing Icon */
+.icon-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ============================================================
+   COMBINE MULTIPLE CLASSES
+   ============================================================ */
+
+/* Example: Multiple animations on load
+   <div class="fade-in slide-in-up hover-lift">
+       Content
+   </div>
+*/
+
+/* Example: Styled card with animation
+   <div class="card-custom fade-in hover-lift">
+       <div class="card-body">Content</div>
+   </div>
+*/
+
+/* Example: Button with hover effect
+   <button class="btn-custom-primary hover-lift">
+       Click Me
+   </button>
+*/
+
+/* ============================================================
+   COMMON PATTERNS
+   ============================================================ */
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    border-radius: var(--radius-2xl);
+    padding: 4rem 2rem;
+    text-align: center;
+}
+
+/* Feature Box */
+.feature-box {
+    background: var(--color-bg-primary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: 2rem;
+    transition: var(--transition-base);
+}
+
+.feature-box:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--color-primary);
+}
+
+/* CTA Section */
+.cta-section {
+    background: var(--gradient-primary);
+    color: white;
+    border-radius: var(--radius-xl);
+    padding: 3rem 2rem;
+    text-align: center;
+}
+
+/* ============================================================
+   QUICK SNIPPETS
+   ============================================================ */
+
+/*
+GRADIENT BUTTON:
+<button class="btn-custom-primary">Click Me</button>
+
+GLASS CARD:
+<div class="card-glass">
+    <p>Content with frosted glass effect</p>
+</div>
+
+SPINNING LOADER:
+<div class="spinner-circle"></div>
+
+GRADIENT HEADING:
+<h1 class="text-gradient">Welcome</h1>
+
+ANIMATED ALERT:
+<div class="alert-success-custom">
+    Success message!
+</div>
+
+FEATURE CARD:
+<div class="feature-box fade-in">
+    <h3>Feature Title</h3>
+    <p>Feature description</p>
+</div>
+
+RESPONSIVE GRID:
+<div class="grid-responsive">
+    <div class="card-custom">Item 1</div>
+    <div class="card-custom">Item 2</div>
+    <div class="card-custom">Item 3</div>
+</div>
+*/
+
+/* ============================================================
+   DARK MODE OVERRIDES
+   ============================================================ */
+
+@media (prefers-color-scheme: dark) {
+    .card-custom {
+        background: var(--color-bg-primary);
+        color: var(--color-text-primary);
+    }
+    
+    .input-modern {
+        background: var(--color-bg-primary);
+        color: var(--color-text-primary);
+        border-color: var(--color-border);
+    }
+}
+
+/* ============================================================
+   PRINT STYLES
+   ============================================================ */
+
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    
+    .card-custom {
+        page-break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+}
+
+/* ============================================================
+   PERFORMANCE OPTIMIZATION
+   ============================================================ */
+
+/*
+Use will-change for animated elements:
+.animated-element {
+    will-change: transform;
+}
+
+Use contain for isolated components:
+.card-custom {
+    contain: layout style paint;
+}
+
+Use backface-visibility for 3D transforms:
+.flip-card {
+    backface-visibility: hidden;
+}
+*/

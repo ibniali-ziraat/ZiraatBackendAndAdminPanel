@@ -1,0 +1,81 @@
+@model IEnumerable<ECommerce.Module.Core.Areas.Core.ViewModels.UserAddressListItem>
+@{
+    ViewData["Title"] = Localizer["Address Book"];
+    ViewData["HideChrome"] = true;
+}
+
+<div class="acct-shell acct-shell--dashboard">
+    <div class="acct-body acct-body--dashboard">
+        <partial name="_AccountMenu" />
+
+        <main class="acct-content acct-dashboard">
+            <section class="acct-dashboard-hero acct-dashboard-hero--compact">
+                <div class="acct-dashboard-hero__copy">
+                    <span class="acct-kicker">@Localizer["Shipping"]</span>
+                    <h1>@Localizer["Address Book"]</h1>
+                    <p>@Localizer["Keep delivery locations organized and choose the default address used during checkout."]</p>
+                </div>
+                <div class="acct-dashboard-hero__panel">
+                    <span>@Localizer["Saved addresses"]</span>
+                    <strong>@Model.Count()</strong>
+                    <small>@Localizer["Manage your delivery details below."]</small>
+                </div>
+            </section>
+
+            <section class="acct-form-panel">
+                <div class="acct-form-panel__header">
+                    <div>
+                        <span class="acct-card-label">@Localizer["Delivery details"]</span>
+                        <h2>@Localizer["Address Book"]</h2>
+                    </div>
+                    <a class="acct-primary-action" href="~/user/address/create">@Localizer["Add Address"]</a>
+                </div>
+
+                @if (!Model.Any())
+                {
+                    <p class="acct-empty-state">@Localizer["No addresses saved yet."]</p>
+                }
+                else
+                {
+                    <div class="acct-address-list">
+                    @foreach (var address in Model)
+                    {
+                        <article class="acct-address-card">
+                            <div class="acct-address-card__main">
+                                <div>
+                                    <h3>@address.ContactName</h3>
+                                    <p>
+                                        @address.AddressLine1<br />
+                                    @if (address.DisplayDistrict)
+                                    {
+                                        <text>@address.DistrictName,</text>
+                                    }
+                                        @address.StateOrProvinceName
+                                    </p>
+                                    <span class="acct-muted">@Localizer["Phone"]: @address.Phone</span>
+                                    @if (address.IsDefaultShippingAddress)
+                                    {
+                                        <span class="acct-badge">@Localizer["Default"]</span>
+                                    }
+                                </div>
+                                <div class="acct-address-actions">
+                                    @if (!address.IsDefaultShippingAddress)
+                                    {
+                                        <form method="post" asp-area="Core" asp-controller="UserAddress" asp-action="SetAsDefault" asp-route-id="@address.UserAddressId">
+                                            <button type="submit" class="acct-card-link">@Localizer["Set Default"]</button>
+                                        </form>
+                                    }
+                                    <a href="~/user/address/edit/@address.UserAddressId" class="acct-card-link">@Localizer["Edit"]</a>
+                                    <form method="post" asp-area="Core" asp-controller="UserAddress" asp-action="Delete" asp-route-id="@address.UserAddressId">
+                                        <button type="submit" class="acct-danger-action">@Localizer["Delete"]</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </article>
+                    }
+                    </div>
+                }
+            </section>
+        </main>
+    </div>
+</div>

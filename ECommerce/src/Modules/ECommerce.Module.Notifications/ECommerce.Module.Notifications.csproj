@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+  <ItemGroup>
+    <ProjectReference Include="..\..\ECommerce.Infrastructure\ECommerce.Infrastructure.csproj" />
+    <ProjectReference Include="..\ECommerce.Module.Core\ECommerce.Module.Core.csproj" />
+    <ProjectReference Include="..\ECommerce.Module.HangfireJobs\ECommerce.Module.HangfireJobs.csproj" />
+    <ProjectReference Include="..\ECommerce.Module.Orders\ECommerce.Module.Orders.csproj" />
+    <ProjectReference Include="..\ECommerce.Module.SignalR\ECommerce.Module.SignalR.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="FirebaseAdmin" Version="3.6.0" />
+  </ItemGroup>
+</Project>

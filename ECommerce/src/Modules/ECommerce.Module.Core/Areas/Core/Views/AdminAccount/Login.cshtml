@@ -1,0 +1,42 @@
+@model AdminLoginViewModel
+
+@{
+    Layout = null;
+    var returnUrl = ViewData["ReturnUrl"] as string;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Login - ECommerce</title>
+    <link simpl-append-version="true" rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link simpl-append-version="true" rel="stylesheet" href="~/_content/ECommerce.Module.Core/admin/admin-core.css" />
+</head>
+<body>
+    <div class="container" style="max-width: 460px; margin-top: 80px;">
+        <h2>@Localizer["Admin Login"]</h2>
+        <form asp-area="Core" asp-controller="AdminAccount" asp-action="Login" asp-route-returnurl="@returnUrl" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Email">@Localizer["Email"]</label>
+                <input asp-for="Email" class="form-control" autofocus />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password">@Localizer["Password"]</label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="checkbox">
+                <label asp-for="RememberMe">
+                    <input asp-for="RememberMe" />
+                    @Localizer["Remember me?"]
+                </label>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">@Localizer["Log in"]</button>
+        </form>
+    </div>
+</body>
+</html>

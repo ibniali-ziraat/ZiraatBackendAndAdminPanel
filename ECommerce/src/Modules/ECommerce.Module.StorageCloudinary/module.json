@@ -1,0 +1,6 @@
+{
+  "id": "ECommerce.Module.StorageCloudinary",
+  "name": "Cloudinary Storage",
+  "version": "1.0.0",
+  "isBundledWithHost": true
+}

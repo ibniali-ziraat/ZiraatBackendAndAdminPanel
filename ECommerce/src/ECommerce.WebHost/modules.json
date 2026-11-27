@@ -1,0 +1,182 @@
+[
+  {
+    "id": "ECommerce.Module.ActivityLog",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.Catalog",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.Cms",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.Checkouts",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.Comments",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.Contacts",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.Core",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.DinkToPdf",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.Discussion",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.EmailSenderSmtp",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.Inventory",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.Localization",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.News",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.HangfireJobs",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.Orders",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.PaymentBuyOnCredit",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.PaymentRazor",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.Payments",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.Pricing",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.ProductComparison",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.ProductRecentlyViewed",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.Reviews",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.SampleData",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.Search",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.Shipments",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.Shipping",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.ShippingFree",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.ShippingPrices",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.ShippingTableRate",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.ShoppingCart",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.SignalR",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.StorageCloudinary",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.Tax",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.Vendors",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.WishList",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  },
+  {
+    "id": "ECommerce.Module.Notifications",
+    "isBundledWithHost": true,
+    "version": "1.0.0"
+  }
+]

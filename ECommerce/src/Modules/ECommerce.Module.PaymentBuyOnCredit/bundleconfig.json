@@ -1,0 +1,15 @@
+[
+  {
+    "outputFileName": "wwwroot/admin/paymentbuyoncredit.min.js",
+    "inputFiles": [
+      "wwwroot/admin/paymentBuyOnCredit.module.js",
+      "wwwroot/admin/config/cod-service.js",
+      "wwwroot/admin/config/config-form.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  }
+]

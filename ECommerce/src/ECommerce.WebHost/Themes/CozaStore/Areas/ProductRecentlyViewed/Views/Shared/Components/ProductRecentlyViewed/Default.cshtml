@@ -1,0 +1,19 @@
+@model IList<ECommerce.Module.Catalog.Areas.Catalog.ViewModels.ProductThumbnail>
+
+@if (Model.Any())
+{
+    <section class="invenzo-section invenzo-related-section">
+        <div class="invenzo-section-heading">
+            <span class="invenzo-section-eyebrow">@Localizer["Your journey"]</span>
+            <h3>@Localizer["Recently viewed products"]</h3>
+        </div>
+        <div class="row product-list invenzo-product-grid">
+            @foreach (var product in Model)
+            {
+                <div class="col-sm-6 col-lg-4 col-xl-3 mb-4">
+                    <partial name="/Themes/CozaStore/Areas/Catalog/Views/Shared/_ProductThumbnail.cshtml" model="product" />
+                </div>
+            }
+        </div>
+    </section>
+}

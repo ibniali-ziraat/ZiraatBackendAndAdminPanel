@@ -1,0 +1,84 @@
+﻿@model ManageLoginsViewModel
+@using Microsoft.AspNetCore.Authentication
+@{
+    ViewData["Title"] = Localizer["Manage your external logins"];
+    ViewData["HideChrome"] = true;
+}
+
+<div class="acct-shell acct-shell--dashboard">
+    <div class="acct-body acct-body--dashboard">
+        <partial name="_AccountMenu" />
+
+        <main class="acct-content acct-dashboard">
+            <section class="acct-dashboard-hero acct-dashboard-hero--compact">
+                <div class="acct-dashboard-hero__copy">
+                    <span class="acct-kicker">@Localizer["Connected access"]</span>
+                    <h1>@ViewData["Title"]</h1>
+                    <p>@Localizer["Review and connect external providers used to sign in to this account."]</p>
+                </div>
+                <div class="acct-dashboard-hero__panel">
+                    <span>@Localizer["Registered logins"]</span>
+                    <strong>@Model.CurrentLogins.Count</strong>
+                    <small>@Localizer["Connected providers are listed below."]</small>
+                </div>
+            </section>
+
+            @if (!string.IsNullOrWhiteSpace(ViewData["StatusMessage"] as string))
+            {
+                <div class="acct-alert">@ViewData["StatusMessage"]</div>
+            }
+
+            <section class="acct-form-panel">
+                <div class="acct-form-panel__header">
+                    <div>
+                        <span class="acct-card-label">@Localizer["Access providers"]</span>
+                        <h2>@Localizer["Registered Logins"]</h2>
+                    </div>
+                    <a href="~/user" class="acct-secondary-action">@Localizer["Back to dashboard"]</a>
+                </div>
+
+                @if (Model.CurrentLogins.Count > 0)
+                {
+                    <div class="acct-provider-list">
+                        @for (var index = 0; index < Model.CurrentLogins.Count; index++)
+                        {
+                            <div class="acct-provider-row">
+                                <strong>@Model.CurrentLogins[index].LoginProvider</strong>
+                                @if ((bool)ViewData["ShowRemoveButton"])
+                                {
+                                    <form asp-area="Core" asp-controller="Manage" asp-action="RemoveLogin" method="post">
+                                        <input asp-for="@Model.CurrentLogins[index].LoginProvider" name="LoginProvider" type="hidden" />
+                                        <input asp-for="@Model.CurrentLogins[index].ProviderKey" name="ProviderKey" type="hidden" />
+                                        <button type="submit" class="acct-secondary-action" title="Remove this @Model.CurrentLogins[index].LoginProvider login from your account">@Localizer["Remove"]</button>
+                                    </form>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="acct-empty-state">@Localizer["No external logins are connected."]</p>
+                }
+
+                @if (Model.OtherLogins.Count > 0)
+                {
+                    <div class="acct-provider-add">
+                        <h3>@Localizer["Add another service to log in."]</h3>
+                        <form asp-area="Core" asp-controller="Manage" asp-action="LinkLogin" method="post">
+                            <div class="acct-provider-actions" id="socialLoginList">
+                                @foreach (var provider in Model.OtherLogins)
+                                {
+                                    <button type="submit" class="acct-card-link" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.Name</button>
+                                }
+                            </div>
+                        </form>
+                    </div>
+                }
+            </section>
+        </main>
+    </div>
+</div>
+
+
+

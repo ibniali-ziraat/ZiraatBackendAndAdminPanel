@@ -1,0 +1,90 @@
+<link rel="stylesheet" href="_content/ECommerce.Module.Core/admin/farm-management/farm-management.css">
+<section class="farm-workspace">
+    <div ng-if="!vm.createPage">
+    <div class="farm-toolbar">
+        <h1>{{vm.directory ? 'Orchard Directory' : 'Advisory Center'}}</h1>
+        <a class="btn btn-default" ng-if="vm.directory" ui-sref="farm-advisories"><i class="fa fa-bullhorn" aria-hidden="true"></i> Advisories</a>
+        <button class="btn btn-primary" ng-if="!vm.directory" ng-click="vm.newDraft()" ng-disabled="vm.busy"><i class="fa fa-plus" aria-hidden="true"></i> New advisory</button>
+    </div>
+    <div class="alert alert-danger" role="alert" ng-if="vm.error">{{vm.error}}</div>
+    <div class="alert alert-success" role="status" ng-if="vm.success">{{vm.success}}</div>
+    <div class="farm-toolbar">
+        <form ng-submit="vm.load(true)" ng-if="vm.directory">
+            <input class="form-control" aria-label="Search orchards" placeholder="Name, reference or district" ng-model="vm.search" maxlength="100">
+            <button class="btn btn-default farm-icon" title="Search orchards" aria-label="Search orchards"><i class="fa fa-search" aria-hidden="true"></i></button>
+        </form>
+        <select ng-if="!vm.directory" class="form-control" style="width:180px" aria-label="Advisory status" ng-model="vm.status" ng-change="vm.load(true)">
+            <option value="">All statuses</option><option value="draft">Draft</option><option value="published">Published</option><option value="cancelled">Cancelled</option>
+        </select>
+        <button class="btn btn-default farm-icon" title="Refresh" aria-label="Refresh" ng-click="vm.load()" ng-disabled="vm.loading"><i class="fa fa-refresh" aria-hidden="true"></i></button>
+    </div>
+    <p class="farm-state" role="status" ng-if="vm.loading">Loading...</p>
+    <p class="farm-state" ng-if="!vm.loading && !vm.items.length">No {{vm.directory ? 'orchards' : 'advisories'}} found.</p>
+    <div class="table-responsive" ng-if="vm.items.length && !vm.loading">
+        <table class="table table-hover farm-mobile-table" ng-if="vm.directory">
+            <thead><tr><th>Orchard / trees</th><th>Area</th><th>Owner name</th><th>Village</th><th>Tehsil</th><th>District</th><th><span class="sr-only">Actions</span></th></tr></thead>
+            <tbody><tr ng-repeat="o in vm.items track by o.id"><td data-label="Orchard"><strong>{{o.orchardName || 'Unnamed orchard'}}</strong><br>{{o.treeCount}} trees</td><td data-label="Area">{{o.kanals}} kanal / {{o.marlas}} marla</td><td data-label="Owner name">{{o.ownerName || 'Unassigned'}}</td><td data-label="Village">{{o.village || '-'}}</td><td data-label="Tehsil">{{o.tehsil || '-'}}</td><td data-label="District">{{o.district || '-'}}</td><td data-label="Action"><button class="btn btn-default farm-icon" ng-click="vm.newDraft(o)" ng-disabled="!o.userId" title="Create advisory" aria-label="Create advisory"><i class="fa fa-bullhorn" aria-hidden="true"></i></button></td></tr></tbody>
+        </table>
+        <table class="table table-hover farm-mobile-table" ng-if="!vm.directory">
+            <thead><tr><th>Advisory</th><th>Type</th><th>Status</th><th>Application window</th><th>Recipients</th><th><span class="sr-only">Actions</span></th></tr></thead>
+            <tbody><tr ng-repeat="a in vm.items track by a.id"><td data-label="Advisory"><a href="" ng-click="vm.open(a)">{{a.title}}</a></td><td data-label="Type">{{a.kind}}</td><td data-label="Status" class="farm-status">{{a.status}}</td><td data-label="Window">{{a.windowStart | date:'medium'}}<br>{{a.windowEnd | date:'medium'}}</td><td data-label="Recipients">{{a.recipientCount}}</td><td data-label="Action"><button class="btn btn-default farm-icon" title="Open advisory" aria-label="Open advisory" ng-click="vm.open(a)" ng-disabled="vm.busy"><i class="fa fa-folder-open" aria-hidden="true"></i></button></td></tr></tbody>
+        </table>
+    </div>
+    <div class="farm-pagination"><span>{{vm.total}} total / Page {{vm.page}}</span><button class="btn btn-default farm-icon" ng-click="vm.move(-1)" ng-disabled="vm.page === 1 || vm.loading" title="Previous page" aria-label="Previous page"><i class="fa fa-chevron-left" aria-hidden="true"></i></button><button class="btn btn-default farm-icon" ng-click="vm.move(1)" ng-disabled="vm.page * vm.pageSize >= vm.total || vm.loading" title="Next page" aria-label="Next page"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></div>
+    </div>
+
+    <div class="farm-editor-backdrop" ng-if="vm.edit" ng-class="{'farm-editor-page': vm.createPage}" ng-click="!vm.createPage && vm.close()">
+    <section class="farm-editor" role="dialog" aria-modal="true" aria-labelledby="farm-advisory-title" ng-click="$event.stopPropagation()">
+        <div class="farm-toolbar"><h2 id="farm-advisory-title">{{vm.edit.id ? vm.edit.title : 'New advisory'}}</h2><button class="btn btn-default farm-icon" ng-click="vm.close()" ng-disabled="vm.busy" title="Close advisory" aria-label="Close advisory"><i class="fa fa-times" aria-hidden="true"></i></button></div>
+        <form name="advisoryForm" ng-submit="vm.save(advisoryForm)" novalidate ng-if="vm.edit.status === 'draft'">
+            <fieldset ng-disabled="vm.busy">
+                <div class="farm-form-grid">
+                    <div><label for="farm-title">Title</label><input id="farm-title" class="form-control" ng-model="vm.edit.title" maxlength="160" required></div>
+                    <div><label for="farm-kind">Type</label><select id="farm-kind" class="form-control" ng-model="vm.edit.kind" ng-options="kind as vm.kindLabel(kind) for kind in vm.kinds" required></select></div>
+                    <div><label for="farm-start">Application start (local time)</label><input id="farm-start" type="datetime-local" class="form-control" ng-model="vm.edit.windowStart" required></div>
+                    <div><label for="farm-end">Application end (local time)</label><input id="farm-end" type="datetime-local" class="form-control" ng-model="vm.edit.windowEnd" required></div>
+                    <div><label for="farm-crop">Crop</label><input id="farm-crop" class="form-control" ng-model="vm.edit.crop" maxlength="100"></div>
+                    <div><label for="farm-variety">Variety</label><input id="farm-variety" class="form-control" ng-model="vm.edit.variety" maxlength="100"></div>
+                    <div><label for="farm-stage">Growth stage</label><input id="farm-stage" class="form-control" ng-model="vm.edit.growthStage" maxlength="100"></div>
+                    <div class="farm-wide"><label for="farm-recommendation">Recommendation</label><textarea id="farm-recommendation" class="form-control" ng-model="vm.edit.recommendation" maxlength="4000" required></textarea></div>
+                </div>
+                <div class="farm-targets">
+                    <h3>Target orchards ({{vm.selectionCount()}} selected)</h3>
+                    <div class="farm-toolbar">
+                        <input class="form-control" style="max-width:360px" aria-label="Find target orchards" placeholder="Find orchards" ng-model="vm.targetSearch" ng-model-options="{debounce:300}" ng-change="vm.loadTargets(true)">
+                        <select class="form-control" style="max-width:260px" aria-label="Filter target orchards by district" ng-model="vm.targetDistrict" ng-options="district for district in vm.districts" ng-change="vm.loadTargets(true)"><option value="">All districts</option></select>
+                    </div>
+                    <div class="farm-selection"><span ng-repeat="(id, name) in vm.selected">{{name}} <button type="button" class="btn btn-link" ng-click="vm.toggle({id:id}); advisoryForm.$setDirty()" title="Remove orchard" aria-label="Remove orchard"><i class="fa fa-times" aria-hidden="true"></i></button></span></div>
+                    <p ng-if="vm.targetsLoading">Loading orchards...</p>
+                    <p ng-if="!vm.targetsLoading && !vm.targets.length">No matching orchards.</p>
+                    <div class="table-responsive" ng-if="vm.targets.length"><table class="table farm-mobile-table"><thead><tr><th>Orchard</th><th>Trees</th><th>Area</th><th>Village</th><th>Tehsil</th><th>District</th><th>Owner name</th></tr></thead><tbody><tr ng-repeat="o in vm.targets track by o.id"><td data-label="Orchard"><label><input type="checkbox" ng-checked="!!vm.selected[o.id]" ng-click="vm.toggle(o); advisoryForm.$setDirty()" ng-disabled="!o.userId">{{o.orchardName || 'Unnamed orchard'}}</label></td><td data-label="Trees">{{o.treeCount}}</td><td data-label="Area">{{o.kanals}} kanal / {{o.marlas}} marla</td><td data-label="Village">{{o.village || '-'}}</td><td data-label="Tehsil">{{o.tehsil || '-'}}</td><td data-label="District">{{o.district || '-'}}</td><td data-label="Owner name">{{o.ownerName || 'Unassigned'}}</td></tr></tbody></table></div>
+                    <div class="farm-pagination"><span>Page {{vm.targetPage}}</span><button type="button" class="btn btn-default farm-icon" ng-click="vm.targetMove(-1)" ng-disabled="vm.targetPage === 1 || vm.targetsLoading" title="Previous orchards" aria-label="Previous orchards"><i class="fa fa-chevron-left" aria-hidden="true"></i></button><button type="button" class="btn btn-default farm-icon" ng-click="vm.targetMove(1)" ng-disabled="vm.targetPage * 25 >= vm.targetTotal || vm.targetsLoading" title="Next orchards" aria-label="Next orchards"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></div>
+                </div>
+                <div class="farm-actions"><button class="btn btn-primary" ng-disabled="advisoryForm.$invalid || !vm.selectionCount() || vm.selectionCount() > 500"><i class="fa fa-save" aria-hidden="true"></i> Save draft</button><button type="button" class="btn btn-default" ng-if="vm.edit.id" ng-disabled="advisoryForm.$dirty" ng-click="vm.previewRecipients()">Preview recipients</button></div>
+                <div ng-if="vm.preview && !advisoryForm.$dirty"><h3>Publish to {{vm.preview.count}} orchard recipients</h3><ul><li ng-repeat="o in vm.preview.items">{{o.orchardName}} / Owner #{{o.farmerId}}</li></ul><button type="button" class="btn btn-primary" ng-click="vm.publish()"><i class="fa fa-paper-plane" aria-hidden="true"></i> Publish advisory</button></div>
+            </fieldset>
+        </form>
+        <div ng-if="vm.edit.status !== 'draft'">
+            <p><strong class="farm-status">{{vm.edit.status}}</strong> / {{vm.edit.kind}} / {{vm.edit.crop}} / {{vm.edit.variety}} / {{vm.edit.growthStage}}</p>
+            <p>{{vm.edit.windowStart | date:'medium'}} - {{vm.edit.windowEnd | date:'medium'}}</p>
+            <div class="farm-readonly">{{vm.edit.recommendation}}</div>
+            <p class="farm-warning" ng-if="vm.edit.cancellationReason">{{vm.edit.cancellationReason}}</p>
+        </div>
+        <div ng-if="vm.edit.id && vm.edit.status !== 'cancelled'" class="farm-targets">
+            <label for="farm-cancel">Cancellation reason</label><input id="farm-cancel" class="form-control" ng-model="vm.cancelReason" maxlength="1000">
+            <button type="button" class="btn btn-danger" style="margin-top:8px" ng-click="vm.cancel()" ng-disabled="vm.busy || !vm.cancelReason">Cancel advisory</button>
+        </div>
+        <div ng-if="vm.edit.id && vm.edit.status !== 'draft'">
+            <ul class="nav nav-tabs farm-tabs"><li ng-class="{active:vm.tab === tab}" ng-repeat="tab in ['recipients','deliveries','audit']"><a href="" ng-click="vm.loadDetail(tab)">{{tab | uppercase}}</a></li></ul>
+            <p class="farm-state" ng-if="vm.detailLoading">Loading...</p>
+            <p class="farm-state" ng-if="!vm.detailLoading && !vm.detail.items.length">No records.</p>
+            <div class="table-responsive" ng-if="!vm.detailLoading && vm.detail.items.length">
+                <table class="table farm-mobile-table" ng-if="vm.tab === 'recipients'"><thead><tr><th>Orchard</th><th>Read</th><th>Acknowledged</th><th>Completed</th><th>Status</th></tr></thead><tbody><tr ng-repeat="r in vm.detail.items"><td data-label="Orchard">{{r.orchardName}} / #{{r.orchardProfileId}}</td><td data-label="Read">{{(r.readOn | date:'short') || '-'}}</td><td data-label="Acknowledged">{{(r.acknowledgedOn | date:'short') || '-'}}</td><td data-label="Completed">{{(r.completedOn | date:'short') || '-'}}</td><td data-label="Status" class="farm-overdue">{{r.isOverdue ? 'Overdue' : '-'}}</td></tr></tbody></table>
+                <table class="table farm-mobile-table" ng-if="vm.tab === 'deliveries'"><thead><tr><th>Event ID</th><th>Event</th><th>Attempts</th><th>Outcome</th><th>Last error</th></tr></thead><tbody><tr ng-repeat="e in vm.detail.items"><td data-label="Event ID">{{e.eventId}}</td><td data-label="Event">{{e.kind}}</td><td data-label="Attempts">{{e.attempts}}</td><td data-label="Outcome">{{e.outcome || 'Pending'}}</td><td data-label="Last error">{{e.lastError || '-'}}</td></tr></tbody></table>
+                <table class="table farm-mobile-table" ng-if="vm.tab === 'audit'"><thead><tr><th>Time</th><th>Action</th><th>Actor ID</th><th>Detail</th></tr></thead><tbody><tr ng-repeat="e in vm.detail.items"><td data-label="Time">{{e.createdOn | date:'medium'}}</td><td data-label="Action">{{e.action}}</td><td data-label="Actor ID">{{e.actorId}}</td><td data-label="Detail">{{e.detail || '-'}}</td></tr></tbody></table>
+            </div>
+            <div class="farm-pagination"><span>{{vm.detail.total || 0}} total / Page {{vm.detailPage}}</span><button class="btn btn-default farm-icon" ng-click="vm.detailMove(-1)" ng-disabled="vm.detailPage === 1 || vm.detailLoading" title="Previous records" aria-label="Previous records"><i class="fa fa-chevron-left" aria-hidden="true"></i></button><button class="btn btn-default farm-icon" ng-click="vm.detailMove(1)" ng-disabled="vm.detailPage * 25 >= vm.detail.total || vm.detailLoading" title="Next records" aria-label="Next records"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></div>
+        </div>
+    </section>
+    </div>
+</section>

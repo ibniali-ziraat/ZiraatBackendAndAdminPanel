@@ -1,0 +1,7 @@
+{
+  "id": "ECommerce.Module.PaymentBuyOnCredit",
+  "name": "Payment Buy On Credit",
+  "version": "1.0.0",
+  "description": "Payment method allowing vendors to offer credit to associated customers",
+  "bundledWithHost": true
+}

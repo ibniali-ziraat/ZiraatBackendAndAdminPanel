@@ -1,0 +1,94 @@
+@model IndexViewModel
+@{
+    ViewData["Title"] = Localizer["Account Dashboard"];
+    ViewData["HideChrome"] = true;
+}
+
+@section head {
+    <link simpl-append-version="true" rel="stylesheet" href="~/themes/CozaStore/css/invenzo-refresh.css" />
+}
+
+<div class="acct-shell acct-shell--dashboard">
+    <div class="acct-body acct-body--dashboard">
+        <partial name="_AccountMenu" />
+
+        <main class="acct-content acct-dashboard">
+            @if (ViewData["StatusMessage"] != null)
+            {
+                <div class="acct-alert">@ViewData["StatusMessage"]</div>
+            }
+
+            <section class="acct-dashboard-hero">
+                <div class="acct-dashboard-hero__copy">
+                    <span class="acct-kicker">@Localizer["Green account workspace"]</span>
+                    <h1>@Localizer["Welcome back"], @Model.FullName</h1>
+                    <p>@Localizer["Manage your profile, security, addresses, orders, and wish list from one focused account screen."]</p>
+                    <div class="acct-dashboard-hero__actions">
+                        <a href="~/user/info" class="acct-primary-action">@Localizer["Edit profile"]</a>
+                        <a href="~/" class="acct-secondary-action">@Localizer["Back to store"]</a>
+                    </div>
+                </div>
+                <div class="acct-dashboard-hero__panel">
+                    <span>@Localizer["Signed in as"]</span>
+                    <strong>@Model.Email</strong>
+                    <small>@Localizer["Your account controls are private and ready when you are."]</small>
+                </div>
+            </section>
+
+            <section class="acct-dashboard-grid">
+                <article class="acct-dashboard-card acct-dashboard-card--profile">
+                    <div class="acct-card-icon">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                    </div>
+                    <div>
+                        <span class="acct-card-label">@Localizer["Account information"]</span>
+                        <h2>@Model.FullName</h2>
+                        <p>@Model.Email</p>
+                    </div>
+                    <a href="~/user/info" class="acct-card-link">@Localizer["Edit"]</a>
+                </article>
+
+                <article class="acct-dashboard-card">
+                    <div class="acct-card-icon">
+                        <i class="fa fa-lock" aria-hidden="true"></i>
+                    </div>
+                    <div>
+                        <span class="acct-card-label">@Localizer["Password"]</span>
+                        <h2>@(Model.HasPassword ? Localizer["Protected"] : Localizer["Not set"])</h2>
+                        <p>@Localizer["Keep your sign-in access current."]</p>
+                    </div>
+                    @if (Model.HasPassword)
+                    {
+                        <a asp-area="Core" asp-controller="Manage" asp-action="ChangePassword" class="acct-card-link">@Localizer["Change"]</a>
+                    }
+                    else
+                    {
+                        <a asp-area="Core" asp-controller="Manage" asp-action="SetPassword" class="acct-card-link">@Localizer["Create"]</a>
+                    }
+                </article>
+
+                <article class="acct-dashboard-card">
+                    <div class="acct-card-icon">
+                        <i class="fa fa-link" aria-hidden="true"></i>
+                    </div>
+                    <div>
+                        <span class="acct-card-label">@Localizer["External logins"]</span>
+                        <h2>@Model.Logins.Count</h2>
+                        <p>@Localizer["Manage connected sign-in providers."]</p>
+                    </div>
+                    <a asp-area="Core" asp-controller="Manage" asp-action="ManageLogins" class="acct-card-link">@Localizer["Manage"]</a>
+                </article>
+
+                <article class="acct-dashboard-card acct-dashboard-card--wide">
+                    <div class="acct-card-icon">
+                        <i class="fa fa-map-marker" aria-hidden="true"></i>
+                    </div>
+                    <div class="acct-shipping-summary">
+                        <span class="acct-card-label">@Localizer["Default shipping address"]</span>
+                        <vc:default-shipping-address></vc:default-shipping-address>
+                    </div>
+                </article>
+            </section>
+        </main>
+    </div>
+</div>

@@ -1,0 +1,6 @@
+{
+  "id": "ECommerce.Module.ShoppingCart",
+  "name": "Shopping Cart",
+  "isBundledWithHost": true,
+  "version": "1.0.0"
+}

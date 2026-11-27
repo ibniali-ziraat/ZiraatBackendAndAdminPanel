@@ -1,0 +1,56 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2>{{::vm.translate.get('Razorpay Settings')}}</h2>
+    </div>
+    <div class="panel-body">
+        <form name="razorConfigForm" class="form-horizontal">
+            <div class="col-sm-offset-2 bg-danger" ng-show="vm.validationErrors">
+                <ul>
+                    <li ng-repeat="error in vm.validationErrors">{{error}}</li>
+                </ul>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Key Id</label>
+                <div class="col-sm-10">
+                    <input name="keyId" ng-model="vm.razorConfig.keyId" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Key Secret</label>
+                <div class="col-sm-10">
+                    <input name="keySecret" ng-model="vm.razorConfig.keySecret" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Webhook Secret</label>
+                <div class="col-sm-10">
+                    <input name="webhookSecret" ng-model="vm.razorConfig.webhookSecret" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Currency</label>
+                <div class="col-sm-10">
+                    <input name="currency" ng-model="vm.razorConfig.currency" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Payout Account Number</label>
+                <div class="col-sm-10">
+                    <input name="payoutAccountNumber" ng-model="vm.razorConfig.payoutAccountNumber" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Payout Mode</label>
+                <div class="col-sm-10">
+                    <input name="payoutMode" ng-model="vm.razorConfig.payoutMode" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button class="btn btn-primary" ng-click="vm.save()"><span class="glyphicon glyphicon-ok"></span> Save</button>
+                    <button ui-sref="payment-providers" class="btn btn-default">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

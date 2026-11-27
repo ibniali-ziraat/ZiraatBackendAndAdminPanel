@@ -1,0 +1,19 @@
+@model IEnumerable<ECommerce.Module.Cms.Areas.Cms.ViewModels.MenuItemVm>
+
+<ul class="invenzo-footer-list">
+    @foreach (var item in Model)
+    {
+        <li>
+            <a href="@item.Link" class="invenzo-footer-link">@item.Name</a>
+            @if (item.ChildItems.Any())
+            {
+                <ul class="invenzo-footer-sublist">
+                    @foreach (var childItem in item.ChildItems)
+                    {
+                        <li><a href="@childItem.Link" class="invenzo-footer-link">@childItem.Name</a></li>
+                    }
+                </ul>
+            }
+        </li>
+    }
+</ul>

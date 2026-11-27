@@ -1,0 +1,16 @@
+@model ECommerce.Module.Catalog.Areas.Catalog.ViewModels.SimpleProductWidgetComponentVm
+
+<section class="invenzo-section">
+    <div class="invenzo-section-heading">
+        <span class="invenzo-section-eyebrow">@Localizer["Handpicked now"]</span>
+        <h2>@Model.WidgetName</h2>
+    </div>
+    <div class="row product-list invenzo-product-grid">
+        @foreach (var product in Model.Products)
+        {
+            <div class="col-sm-6 col-lg-4 col-xl-3 mb-4">
+                <partial name="/Themes/CozaStore/Areas/Catalog/Views/Shared/_ProductThumbnail.cshtml" model="product" />
+            </div>
+        }
+    </div>
+</section>

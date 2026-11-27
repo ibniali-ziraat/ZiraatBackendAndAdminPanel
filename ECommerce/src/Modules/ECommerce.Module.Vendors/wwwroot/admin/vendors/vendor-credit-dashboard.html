@@ -1,0 +1,249 @@
+<div class="vendor-credit-dashboard">
+    <div class="vendor-credit-header">
+        <div>
+            <a ui-sref="vendors" class="vendor-credit-back"><i class="fa fa-arrow-left"></i> {{::vm.translate.get('Back to Vendors')}}</a>
+            <h1>{{::vm.translate.get("Customer Credit Order's Dashboard")}}</h1>
+            <p>{{::vm.translate.get("Check out the details of your customer's credit orders and manage them effectively.")}}</p>
+            <p class="vendor-credit-subtitle" ng-if="vm.vendor.name">{{vm.vendor.name}}</p>
+        </div>
+        <div class="vendor-credit-header-actions">
+            <label>
+                <span>{{::vm.translate.get('Customer')}}</span>
+                <select class="form-control" ng-model="vm.selectedCustomerId" ng-change="vm.selectCustomer()" ng-options="customer.customerId as customer.customerName for customer in vm.customers">
+                    <option value="">{{::vm.translate.get('Select customer')}}</option>
+                </select>
+            </label>
+            <button type="button" class="btn btn-default" ng-click="vm.refresh()" ng-disabled="vm.isLoading">
+                <i class="fa fa-refresh"></i> {{::vm.translate.get('Refresh')}}
+            </button>
+        </div>
+    </div>
+
+    <div class="bg-danger" ng-if="vm.error">{{vm.error}}</div>
+
+    <div class="vendor-credit-loading" ng-if="vm.isLoading">
+        <i class="fa fa-spinner fa-spin"></i> {{::vm.translate.get('Loading credit dashboard')}}...
+    </div>
+
+    <div class="vendor-credit-content" ng-if="!vm.isLoading && !vm.error">
+        <div class="vendor-credit-metrics">
+            <div class="vendor-credit-metric" ng-repeat="card in vm.summaryCards">
+                <div>
+                    <span>{{card.label}}</span>
+                    <strong ng-class="'is-' + card.tone">{{card.value}}</strong>
+                </div>
+                <i ng-class="card.icon + ' is-' + card.tone"></i>
+            </div>
+        </div>
+
+        <div class="vendor-credit-section-heading">
+            <div class="vendor-credit-section-title">
+                <i class="fa fa-money"></i>
+                <div>
+                    <h2>{{::vm.translate.get('Credit Settlement Summary')}} <small>{{vm.settlement.status}}</small></h2>
+                    <p>{{vm.settlement.entries}} {{::vm.translate.get('entries')}}</p>
+                </div>
+            </div>
+            <div class="vendor-credit-actions">
+                <button type="button" class="btn btn-default" ng-click="vm.openSettlementHistory()" ng-disabled="vm.settlements.length === 0">
+                    <i class="fa fa-history"></i> {{::vm.translate.get('View Settlement History')}}
+                </button>
+                <button type="button" class="btn btn-default" ng-click="vm.remindSettlement()" ng-disabled="!vm.selectedCustomerId || vm.settlement.remaining <= 0">
+                    <i class="fa fa-bell-o"></i> {{::vm.translate.get('Remind Settlement')}}
+                </button>
+                <button type="button" class="btn btn-primary" ng-click="vm.openSettlementModal()" ng-disabled="!vm.selectedCustomerId || vm.settlement.remaining <= 0">
+                    <i class="fa fa-plus"></i> {{::vm.translate.get('Add Settlement')}}
+                </button>
+            </div>
+        </div>
+
+        <div class="vendor-credit-settlement-grid">
+            <div class="vendor-credit-total-card">
+                <span>{{::vm.translate.get('Order Total')}}</span>
+                <strong>{{vm.settlement.orderTotalString}}</strong>
+                <p>{{vm.settlement.entries}} {{::vm.translate.get('payments Received')}}</p>
+                <i class="fa fa-credit-card"></i>
+            </div>
+            <div class="vendor-credit-total-card">
+                <span>{{::vm.translate.get('Collected')}}</span>
+                <strong class="is-success">{{vm.settlement.collectedString}}</strong>
+                <p>{{::vm.translate.get('Received payment')}}</p>
+                <i class="fa fa-usd is-success"></i>
+            </div>
+            <div class="vendor-credit-total-card">
+                <span class="is-warning">{{::vm.translate.get('Remaining')}}</span>
+                <strong class="is-warning">{{vm.settlement.remainingString}}</strong>
+                <p>{{::vm.translate.get('Pending collection')}}</p>
+                <i class="fa fa-clock-o is-warning"></i>
+            </div>
+        </div>
+
+        <div class="vendor-credit-orders-card">
+            <div class="vendor-credit-orders-header">
+                <div class="vendor-credit-section-title">
+                    <i class="fa fa-shopping-bag"></i>
+                    <div>
+                        <h2>{{::vm.translate.get('Customer Credit Orders')}} <small>{{::vm.translate.get('Active')}}</small></h2>
+                        <p>{{::vm.translate.get('View and manage all customer credit order records')}}</p>
+                    </div>
+                </div>
+                <a ui-sref="order" class="btn btn-primary">{{::vm.translate.get('View All Orders')}}</a>
+            </div>
+
+            <div class="vendor-credit-total-line">{{::vm.translate.get('Total Orders')}}: <strong>{{vm.orders.length}}</strong></div>
+
+            <div class="vendor-credit-empty" ng-if="vm.orders.length === 0">
+                {{::vm.translate.get('No credit orders found for this vendor.')}}
+            </div>
+
+            <div class="vendor-credit-table-wrap" ng-if="vm.orders.length > 0">
+                <table class="table vendor-credit-table">
+                    <thead>
+                        <tr>
+                            <th>{{::vm.translate.get('Order Id')}}</th>
+                            <th>{{::vm.translate.get('Item')}}</th>
+                            <th>{{::vm.translate.get('Customer')}}</th>
+                            <th>{{::vm.translate.get('Date')}}</th>
+                            <th>{{::vm.translate.get('Amount')}}</th>
+                            <th>{{::vm.translate.get('Status')}}</th>
+                            <th>{{::vm.translate.get('Action')}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="order in vm.getPagedOrders()">
+                            <td><strong class="vendor-credit-order-id">#{{order.orderId}}</strong></td>
+                            <td>
+                                <strong>{{order.itemName}}</strong>
+                                <small>{{::vm.translate.get('Qty')}}: {{order.itemQuantity}}</small>
+                            </td>
+                            <td>{{order.customerName}}</td>
+                            <td>{{order.orderedDate | date:'dd MMM yyyy'}}</td>
+                            <td><strong>{{order.amount | currency:'₹':1}}</strong></td>
+                            <td><span class="vendor-credit-status"><i class="fa fa-circle"></i> {{order.status}}</span></td>
+                            <td>
+                                <a ui-sref="order-detail({id: order.orderId})" class="btn btn-default btn-xs" title="{{::vm.translate.get('View')}}">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="vendor-credit-pagination" ng-if="vm.orders.length > 0">
+                <span>
+                    {{::vm.translate.get('Showing')}} {{vm.pageStart()}}-{{vm.pageEnd()}} {{::vm.translate.get('of')}} {{vm.orders.length}} {{::vm.translate.get('orders')}}
+                </span>
+                <div>
+                    <button type="button" class="btn btn-default btn-xs" ng-click="vm.previousPage()" ng-disabled="vm.currentPage === 1">
+                        <i class="fa fa-angle-left"></i>
+                    </button>
+                    <strong>{{vm.currentPage}}</strong>
+                    <button type="button" class="btn btn-default btn-xs" ng-click="vm.nextPage()" ng-disabled="vm.currentPage === vm.totalPages()">
+                        <i class="fa fa-angle-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-backdrop fade in" ng-if="vm.showSettlementModal || vm.showSettlementHistory"></div>
+
+    <div class="modal vendor-credit-modal" tabindex="-1" role="dialog" ng-if="vm.showSettlementModal" style="display:block">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" ng-click="vm.closeSettlementModal()" aria-label="{{::vm.translate.get('Close')}}"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">{{::vm.translate.get('Add Settlement')}}</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="bg-danger" ng-if="vm.settlementError">{{vm.settlementError}}</div>
+                    <div class="form-group">
+                        <label>{{::vm.translate.get('Amount Paid')}}</label>
+                        <input type="number" class="form-control" ng-model="vm.settlementForm.amount" min="1" />
+                    </div>
+                    <div class="form-group">
+                        <label>{{::vm.translate.get('Payment Method')}}</label>
+                        <select class="form-control" ng-model="vm.settlementForm.method">
+                            <option>Cash</option>
+                            <option>UPI</option>
+                            <option>Cheque</option>
+                            <option>Online</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>{{::vm.translate.get('Transaction Id')}}</label>
+                        <input class="form-control" ng-model="vm.settlementForm.transactionId" />
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>{{::vm.translate.get('Date')}}</label>
+                                <input type="date" class="form-control" ng-model="vm.settlementForm.date" />
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>{{::vm.translate.get('Reminder Date')}}</label>
+                                <input type="date" class="form-control" ng-model="vm.settlementForm.reminderDate" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>{{::vm.translate.get('Note')}}</label>
+                        <textarea class="form-control" rows="3" ng-model="vm.settlementForm.note"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" ng-click="vm.closeSettlementModal()">{{::vm.translate.get('Cancel')}}</button>
+                    <button type="button" class="btn btn-primary" ng-click="vm.saveSettlement()" ng-disabled="vm.isSavingSettlement">
+                        <i class="fa fa-check"></i> {{::vm.translate.get('Save')}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal vendor-credit-modal" tabindex="-1" role="dialog" ng-if="vm.showSettlementHistory" style="display:block">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" ng-click="vm.closeSettlementHistory()" aria-label="{{::vm.translate.get('Close')}}"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">{{::vm.translate.get('Credit Settlement History')}}</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="vendor-credit-table-wrap">
+                        <table class="table vendor-credit-table">
+                            <thead>
+                                <tr>
+                                    <th>{{::vm.translate.get('Settlement Id')}}</th>
+                                    <th>{{::vm.translate.get('Date')}}</th>
+                                    <th>{{::vm.translate.get('Amount Paid')}}</th>
+                                    <th>{{::vm.translate.get('Method')}}</th>
+                                    <th>{{::vm.translate.get('Balance After')}}</th>
+                                    <th>{{::vm.translate.get('Note')}}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="settlement in vm.settlements">
+                                    <td>#{{settlement.settlementId}}</td>
+                                    <td>{{settlement.orderedDate | date:'dd MMM yyyy'}}</td>
+                                    <td>{{settlement.amountPaid | currency:'₹':1}}</td>
+                                    <td>{{settlement.paymentMethod || 'N/A'}}</td>
+                                    <td>{{settlement.balanceAfter | currency:'₹':1}}</td>
+                                    <td>{{settlement.note || 'N/A'}}</td>
+                                </tr>
+                                <tr ng-if="vm.settlements.length === 0">
+                                    <td colspan="6" class="text-center">{{::vm.translate.get('No settlement history available.')}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" ng-click="vm.closeSettlementHistory()">{{::vm.translate.get('Close')}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

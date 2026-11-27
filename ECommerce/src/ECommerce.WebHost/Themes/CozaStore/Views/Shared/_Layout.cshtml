@@ -1,0 +1,192 @@
+﻿@using System.Globalization
+@{
+    var hideChrome = ViewData["HideChrome"] as bool? == true;
+}
+
+<!doctype html>
+<html lang="@CultureInfo.CurrentUICulture.Name.ToLowerInvariant()">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="theme-color" content="#16a34a">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Invenzo">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>@ViewData["Title"] - ECommerce</title>
+    @RenderSection("additionalMeta", false)
+
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/themes/CozaStore/images/icons/logo-01.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <link simpl-append-version="true" rel="stylesheet" type="text/css" href="~/themes/CozaStore/site.min.css" />
+    <link simpl-append-version="true" rel="stylesheet" href="~/themes/CozaStore/css/green-white-theme.css" />
+    <link simpl-append-version="true" rel="stylesheet" href="~/themes/CozaStore/css/animations.css" />
+    <link simpl-append-version="true" rel="stylesheet" href="~/themes/CozaStore/css/responsive.css" />
+    <link simpl-append-version="true" rel="stylesheet" href="~/themes/CozaStore/css/invenzo-refresh.css" />
+    <script simpl-append-version="true" src="~/lib/angular/angular.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
+
+    @RenderSection("head", required: false)
+</head>
+<body class="invenzo-shell @(hideChrome ? "invenzo-auth-shell" : string.Empty)">
+    @if (!hideChrome)
+    {
+        <div class="bg-shapes" aria-hidden="true">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+        </div>
+    }
+
+    @if (!hideChrome)
+    {
+    <header class="invenzo-header">
+        <div class="invenzo-utility-bar">
+            <div class="container invenzo-utility-inner">
+                <div class="invenzo-utility-copy">
+                    @Localizer["Fresh collections, cleaner shopping, and a brighter storefront experience."]
+                </div>
+                <div class="invenzo-utility-actions">
+                    <span class="invenzo-utility-pill">@Localizer["Secure checkout"]</span>
+                    <partial name="_SelectLanguagePartial" />
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="invenzo-brand-row">
+                <a href="~/" class="invenzo-brand">
+                    <span class="invenzo-brand-mark">
+                        <img src="~/themes/CozaStore/images/icons/logo-01.png" alt="Invenzo">
+                    </span>
+                    <span class="invenzo-brand-copy">
+                        <strong>Invenzo</strong>
+                        <small>@Localizer["Elegant storefront styling for SimplCommerce"]</small>
+                    </span>
+                </a>
+
+                <div class="invenzo-search-slot">
+                    @await Component.InvokeAsync("SearchForm")
+                </div>
+
+                <div class="invenzo-header-actions">
+                    @await Component.InvokeAsync("CartBadge")
+                </div>
+            </div>
+        </div>
+
+        <div class="invenzo-nav-shell">
+            <div class="container">
+                <nav class="navbar navbar-expand-lg invenzo-nav">
+                    <button class="navbar-toggler invenzo-nav-toggler" type="button" data-toggle="collapse" data-target="#invenzoMainNav" aria-controls="invenzoMainNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fa fa-bars" aria-hidden="true"></i>
+                    </button>
+                    <div class="collapse navbar-collapse" id="invenzoMainNav">
+                        <ul class="navbar-nav invenzo-nav-list">
+                            @await Component.InvokeAsync("CategoryMenu")
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+    }
+
+    @if (!hideChrome)
+    {
+        @RenderSection("featured", false)
+    }
+
+    <main class="invenzo-main @(hideChrome ? "invenzo-main--auth" : string.Empty)">
+        @if (hideChrome)
+        {
+            @RenderBody()
+        }
+        else
+        {
+            <div class="container">
+                <div class="invenzo-main-surface">
+                    @RenderBody()
+                </div>
+            </div>
+        }
+    </main>
+
+    @if (!hideChrome)
+    {
+    <footer class="invenzo-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="invenzo-footer-brand">
+                        <span class="invenzo-footer-badge">@Localizer["Refreshed UI"]</span>
+                        <h3>Invenzo</h3>
+                        <p>@Localizer["A brighter shopping experience with modern navigation, clearer hierarchy, and improved product presentation."]</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h4 class="invenzo-footer-title">@Localizer["Browse"]</h4>
+                    <vc:menu menu-id="2"></vc:menu>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h4 class="invenzo-footer-title">@Localizer["Support"]</h4>
+                    <vc:menu menu-id="1"></vc:menu>
+                </div>
+            </div>
+
+            <div class="invenzo-footer-bottom">
+                <p>&copy; @DateTime.UtcNow.Year Invenzo</p>
+                <p>@Localizer["Powered by SimplCommerce with a custom green storefront refresh."]</p>
+            </div>
+        </div>
+    </footer>
+    }
+
+    <div id="shopModal" class="modal fade glass-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content glass-modal-content">
+            </div>
+        </div>
+    </div>
+    <div id="productOverview" class="modal fade glass-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content glass-modal-content">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.simplGlobalSetting = {};
+        window.simplGlobalSetting.lang = '@CultureInfo.CurrentCulture.Name';
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script simpl-append-version="true" src="~/lib/bootstrap4/js/bootstrap.min.js"></script>
+    <script simpl-append-version="true" src="~/lib/multi-dropdown-menu/js/bootstrap-4-navbar.js"></script>
+    <script simpl-append-version="true" src="~/lib/matchheight/jquery.matchHeight.js"></script>
+    <script simpl-append-version="true" src="~/lib/toastr/build/toastr.min.js"></script>
+    <script simpl-append-version="true" src="~/lib/bootstrap-star-rating/js/star-rating.js"></script>
+    @if (CultureInfo.CurrentCulture.Name != ECommerce.Infrastructure.GlobalConfiguration.DefaultCulture)
+    {
+        <script simpl-append-version="true" src="~/lib/bootstrap-star-rating/js/locales/@(CultureInfo.CurrentCulture.Name).js"></script>
+    }
+
+    <script simpl-append-version="true" src="~/themes/CozaStore/vendor/slick/slick.min.js"></script>
+    <script simpl-append-version="true" src="~/themes/CozaStore/js/slick-custom.js"></script>
+    <script simpl-append-version="true" src="~/themes/CozaStore/js/cozastore.js"></script>
+    <script simpl-append-version="true" src="~/_content/ECommerce.Module.Core/main.js"></script>
+    <script simpl-append-version="true" src="~/_content/ECommerce.Module.ShoppingCart/add-to-cart.js"></script>
+    <script simpl-append-version="true" src="~/_content/ECommerce.Module.ProductComparison/product-comparison.js"></script>
+    <script simpl-append-version="true" src="/pwa-register.js"></script>
+    <script simpl-append-version="true" src="~/js/button-icons.js"></script>
+    @RenderSection("scripts", required: false)
+
+    <partial name="_AnalyticsScript" />
+</body>
+</html>

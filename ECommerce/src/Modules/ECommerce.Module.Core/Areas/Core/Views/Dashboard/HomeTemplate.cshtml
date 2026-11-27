@@ -1,0 +1,288 @@
+﻿@{
+    Layout = null;
+}
+
+<div class="ziraat-admin-dashboard" ng-cloak>
+    <section class="dashboard-hero">
+        <div class="dashboard-hero__content">
+            <span class="dashboard-hero__eyebrow">@Localizer["Admin dashboard"]</span>
+            <h2>@Localizer["Keep the store moving from one focused workspace"]</h2>
+            <p>@Localizer["Review the newest orders, jump into your busiest modules, and stay on top of publishing and moderation without hunting through menus."]</p>
+            <div class="dashboard-hero__actions">
+                <a ui-sref="order" class="btn btn-primary">
+                    <i class="fa fa-shopping-bag" aria-hidden="true"></i>
+                    <span>@Localizer["View orders"]</span>
+                </a>
+                <a ui-sref="product" class="btn btn-default">
+                    <i class="fa fa-cube" aria-hidden="true"></i>
+                    <span>@Localizer["Manage catalog"]</span>
+                </a>
+                @if (User.IsInRole("admin"))
+                {
+                    <a ui-sref="configuration" class="btn btn-default">
+                        <i class="fa fa-cogs" aria-hidden="true"></i>
+                        <span>@Localizer["Open settings"]</span>
+                    </a>
+                }
+            </div>
+
+            <div class="dashboard-hero-metrics" ng-if="vm.chartMetrics.length">
+                <div class="dashboard-hero-metric"
+                     ng-repeat="metric in vm.chartMetrics | limitTo: 4 track by metric.key">
+                    <span>{{ metric.label }}</span>
+                    <strong>{{ metric.total | number }}</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-hero__spotlight">
+            <div class="dashboard-spotlight-card">
+                <span>@Localizer["Today's focus"]</span>
+                <strong>@Localizer["Fast decisions with a clearer picture"]</strong>
+                <p>@Localizer["Follow the live totals, jump into the busiest modules, and use the cards below as your daily command board."]</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="dashboard-quicklinks">
+        <a ui-sref="order" class="dashboard-quicklink">
+            <i class="fa fa-shopping-basket" aria-hidden="true"></i>
+            <strong>@Localizer["Orders"]</strong>
+            <span>@Localizer["Process purchases and track fulfillment."]</span>
+        </a>
+        <a ui-sref="product" class="dashboard-quicklink">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <strong>@Localizer["Products"]</strong>
+            <span>@Localizer["Refresh the catalog, pricing, and availability."]</span>
+        </a>
+        <a ui-sref="shipments" class="dashboard-quicklink">
+            <i class="fa fa-truck" aria-hidden="true"></i>
+            <strong>@Localizer["Shipments"]</strong>
+            <span>@Localizer["See what is moving out and what needs attention."]</span>
+        </a>
+        @if (User.IsInRole("admin"))
+        {
+            <a ui-sref="page" class="dashboard-quicklink">
+                <i class="fa fa-file-text-o" aria-hidden="true"></i>
+                <strong>@Localizer["Content"]</strong>
+                <span>@Localizer["Update pages, menus, and promotional surfaces."]</span>
+            </a>
+        }
+    </section>
+
+    <section class="dashboard-insights">
+        <article class="dashboard-stats">
+            <div class="dashboard-stats__header">
+                <div>
+                    <span class="dashboard-card__eyebrow">@Localizer["Live overview"]</span>
+                    <h3>@Localizer["Admin totals at a glance"]</h3>
+                </div>
+                <strong ng-if="!vm.metricsLoading">{{ vm.metricsTotal | number }}</strong>
+            </div>
+            <p class="dashboard-stats__copy">@Localizer["These cards pull current totals from the main admin modules so you can spot workload and inventory pressure quickly."]</p>
+
+            <div class="dashboard-stats__grid" ng-if="vm.chartMetrics.length">
+                <button type="button" class="dashboard-stat" ng-repeat="metric in vm.chartMetrics track by metric.key"
+                        ng-click="vm.openMetric(metric)">
+                    <span class="dashboard-stat__icon {{ metric.toneClass }}">
+                        <i class="fa {{ metric.icon }}" aria-hidden="true"></i>
+                    </span>
+                    <span class="dashboard-stat__content">
+                        <strong>{{ metric.total | number }}</strong>
+                        <span>{{ metric.label }}</span>
+                        <small>{{ metric.description }}</small>
+                    </span>
+                </button>
+            </div>
+
+            <p class="dashboard-insights__state" ng-if="vm.metricsLoading">@Localizer["Loading the latest admin totals..."]</p>
+            <p class="dashboard-insights__state" ng-if="!vm.metricsLoading && !vm.chartMetrics.length">@Localizer["No graph data is available for the current account."]</p>
+        </article>
+
+        <article class="dashboard-graph-card">
+            <div class="dashboard-graph-card__header">
+                <div>
+                    <span class="dashboard-card__eyebrow">@Localizer["Graph view"]</span>
+                    <h3>@Localizer["Module activity snapshot"]</h3>
+                </div>
+                <span>@Localizer["Relative volume"]</span>
+            </div>
+
+            <div class="dashboard-bars" ng-if="vm.chartMetrics.length">
+                <div class="dashboard-bar-row" ng-repeat="metric in vm.chartMetrics track by metric.key">
+                    <div class="dashboard-bar-row__meta">
+                        <strong>{{ metric.label }}</strong>
+                        <span>{{ metric.total | number }}</span>
+                    </div>
+                    <div class="dashboard-bar-track">
+                        <div class="dashboard-bar-fill {{ metric.toneClass }}"
+                             ng-style="{ width: metric.widthPercent + '%' }"></div>
+                    </div>
+                </div>
+            </div>
+
+            <p class="dashboard-insights__state" ng-if="vm.metricsLoading">@Localizer["Building the graph..."]</p>
+            <p class="dashboard-insights__state" ng-if="!vm.metricsLoading && !vm.chartMetrics.length">@Localizer["Graph data will appear here once the modules respond."]</p>
+        </article>
+    </section>
+
+    <section class="dashboard-grid">
+        <article class="dashboard-card">
+            <div class="dashboard-card__header">
+                <div>
+                    <span class="dashboard-card__eyebrow">@Localizer["Sales"]</span>
+                    <h3>@Localizer["Latest orders"]</h3>
+                </div>
+                <a ui-sref="order">@Localizer["See all"]</a>
+            </div>
+            <div class="dashboard-card__body">
+                <order-widget status="0" num-records="5"></order-widget>
+            </div>
+        </article>
+
+        @if (User.IsInRole("admin"))
+        {
+            <article class="dashboard-card">
+                <div class="dashboard-card__header">
+                    <div>
+                        <span class="dashboard-card__eyebrow">@Localizer["Community"]</span>
+                        <h3>@Localizer["Pending reviews"]</h3>
+                    </div>
+                    <a ui-sref="reviews">@Localizer["Moderate"]</a>
+                </div>
+                <div class="dashboard-card__body">
+                    <review-widget status="1" num-records="5"></review-widget>
+                </div>
+            </article>
+
+            <article class="dashboard-card">
+                <div class="dashboard-card__header">
+                    <div>
+                        <span class="dashboard-card__eyebrow">@Localizer["Responses"]</span>
+                        <h3>@Localizer["Pending review replies"]</h3>
+                    </div>
+                    <a ui-sref="review-replies">@Localizer["Review queue"]</a>
+                </div>
+                <div class="dashboard-card__body">
+                    <review-reply-widget status="1" num-records="5"></review-reply-widget>
+                </div>
+            </article>
+
+            <article class="dashboard-card">
+                <div class="dashboard-card__header">
+                    <div>
+                        <span class="dashboard-card__eyebrow">@Localizer["Search"]</span>
+                        <h3>@Localizer["Most searched keywords"]</h3>
+                    </div>
+                </div>
+                <div class="dashboard-card__body">
+                    <most-search-keyword></most-search-keyword>
+                </div>
+            </article>
+
+            <article class="dashboard-card">
+                <div class="dashboard-card__header">
+                    <div>
+                        <span class="dashboard-card__eyebrow">@Localizer["Catalog"]</span>
+                        <h3>@Localizer["Most viewed products"]</h3>
+                    </div>
+                    <a ui-sref="product">@Localizer["Open catalog"]</a>
+                </div>
+                <div class="dashboard-card__body">
+                    <most-viewed-products></most-viewed-products>
+                </div>
+            </article>
+        }
+    </section>
+
+   
+    <p class="dashboard-insights__state" ng-if="vm.loading">@Localizer["Loading dashboard data..."]</p>
+    <p class="dashboard-insights__state text-danger" ng-if="!vm.loading && vm.error">@Localizer["Dashboard data could not be loaded. Please try again."]</p>
+
+    <section class="ziraat-metrics" aria-label="Dashboard metrics" ng-if="vm.dashboard.metrics.length">
+        <article class="ziraat-metric" ng-repeat="metric in vm.dashboard.metrics track by metric.label">
+            <i class="{{ metric.iconCssClass }}" aria-hidden="true"></i>
+            <div>
+                <span>{{ metric.label }}</span>
+                <strong>{{ metric.value }}</strong>
+            </div>
+        </article>
+    </section>
+
+    <section class="ziraat-panel-grid" aria-label="Customer analytics">
+        <article class="ziraat-panel">
+            <h2>@Localizer["Customer Registrations (Monthly)"]</h2>
+            <div class="ziraat-list">
+                <div class="ziraat-list-row" ng-repeat="item in vm.dashboard.customerRegistrations track by item.label">
+                    <span>{{ item.label }}</span>
+                    <span>{{ item.value }}</span>
+                </div>
+            </div>
+        </article>
+
+        <article class="ziraat-panel">
+            <h2>@Localizer["Customer Verification Rate (Monthly)"]</h2>
+            <div class="ziraat-list">
+                <div class="ziraat-list-row"
+                     ng-repeat="item in vm.dashboard.customerVerificationRates track by item.label">
+                    <span>{{ item.label }}</span>
+                    <span>{{ item.value }}</span>
+                </div>
+            </div>
+        </article>
+
+        <article class="ziraat-panel">
+            <h2>@Localizer["Orders by Region"]</h2>
+            <div class="ziraat-list">
+                <div class="ziraat-list-row" ng-repeat="item in vm.dashboard.ordersByRegion track by item.label">
+                    <span>{{ item.label }}</span>
+                    <span>{{ item.value }}</span>
+                </div>
+            </div>
+        </article>
+
+        <article class="ziraat-panel">
+            <h2>@Localizer["Customers by Region"]</h2>
+            <div class="ziraat-list">
+                <div class="ziraat-list-row" ng-repeat="item in vm.dashboard.customersByRegion track by item.label">
+                    <span>{{ item.label }}</span>
+                    <span>{{ item.value }}</span>
+                </div>
+            </div>
+        </article>
+    </section>
+
+    <section class="ziraat-activity" aria-label="Customer activity overview">
+        <div class="ziraat-activity-header">
+            <h2>@Localizer["Customer Activity Overview"]</h2>
+            <p>@Localizer["Overview of customer regions, activity, and verification status"]</p>
+        </div>
+
+        <div class="ziraat-activity-table-wrap">
+            <table class="ziraat-activity-table">
+                <thead>
+                    <tr>
+                        <th>@Localizer["Customer Code"]</th>
+                        <th>@Localizer["Customer Name"]</th>
+                        <th>@Localizer["Region"]</th>
+                        <th>@Localizer["Orders"]</th>
+                        <th>@Localizer["Support Staff"]</th>
+                        <th>@Localizer["Transactions"]</th>
+                        @* <th>@Localizer["Verification Status"]</th> *@
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="row in vm.dashboard.customerActivity track by $index">
+                        <td>{{ row.customerCode }}</td>
+                        <td>{{ row.customerName }}</td>
+                        <td>{{ row.region }}</td>
+                        <td>{{ row.orders }}</td>
+                        <td>{{ row.supportStaff }}</td>
+                        <td>{{ row.transactions }}</td>
+                        @* <td class="ziraat-status">{{ row.verificationStatus }}</td> *@
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>

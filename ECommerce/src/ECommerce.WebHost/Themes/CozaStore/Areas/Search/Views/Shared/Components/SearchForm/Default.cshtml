@@ -1,0 +1,14 @@
+@model ECommerce.Module.Search.Areas.Search.ViewModels.SearchForm
+
+<form class="invenzo-search-form" method="get" action="~/search">
+    <div class="invenzo-search-field">
+        <i class="zmdi zmdi-search" aria-hidden="true"></i>
+        <input type="text" name="query" asp-for="Query" placeholder="@Localizer["Search products, brands, and categories"]">
+    </div>
+    <div class="invenzo-search-category d-none d-lg-flex">
+        <select name="category" asp-for="Category" asp-items="Model.AvailableCategories">
+            <option value="all">@Localizer["All Categories"]</option>
+        </select>
+    </div>
+    <button type="submit" class="invenzo-search-submit">@Localizer["Search"]</button>
+</form>

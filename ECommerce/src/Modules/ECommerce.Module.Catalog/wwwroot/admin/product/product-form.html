@@ -1,0 +1,649 @@
+﻿<div>
+    <div class="page-header">
+        <div class="row">
+            <div class="col-md-8">
+                <h2 ng-if="!vm.isEditMode">{{::vm.translate.get('Create Product')}}</h2>
+                <h2 ng-if="vm.isEditMode">{{::vm.translate.get('Edit Product')}} {{vm.product.name}}</h2>
+            </div>
+            <div class="col-md-4 text-right">
+                <a ng-if="vm.isEditMode" ui-sref="product-clone({id: vm.product.id})" class="btn btn-primary"><span class="glyphicon glyphicon-copy"></span> {{::vm.translate.get('Clone Product')}}</a>
+            </div>
+        </div>
+    </div>
+    <div class="panel-body">
+        <form name="productForm" class="form-horizontal">
+            <div class="col-sm-offset-2 bg-danger" ng-show="vm.validationErrors">
+                <ul>
+                    <li ng-repeat="error in vm.validationErrors">{{error}}</li>
+                </ul>
+            </div>
+            <uib-tabset>
+                <uib-tab index="0" heading="{{::vm.translate.get('General Information')}}">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">{{::vm.translate.get('Product Name')}}</label>
+                        <div class="col-sm-10">
+                            <input name="name" ng-model="vm.product.name" ng-change="vm.updateSlug()" required class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">{{::vm.translate.get('Slug')}}</label>
+                        <div class="col-sm-10">
+                            <input name="slug" ng-model="vm.product.slug" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">{{::vm.translate.get('Brand')}}</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" ng-model="vm.product.brandId" ng-options="brand.id as brand.name for brand in vm.brands"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">{{::vm.translate.get('Short Description')}}</label>
+                        <div class="col-sm-10">
+                            <summernote on-image-upload="vm.shortDescUpload(files)" editor="vm.shortDescEditor" ng-model="vm.product.shortDescription"></summernote>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">{{::vm.translate.get('Description')}}</label>
+                         <div class="col-sm-10">
+                            <summernote on-image-upload="vm.descUpload(files)" editor="vm.descEditor" ng-model="vm.product.description"></summernote>
+                            <!--<div class="voice-note-tools" style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 8px;">
+                                <input type="file"
+                                       id="productVoiceNote"
+                                       style="display: none;"
+                                       ngf-select
+                                       ngf-change="vm.processVoiceNote($file)"
+                                       ngf-accept="'audio/*'"
+                                       accept="audio/*"
+                                       ng-disabled="vm.voiceNote.isProcessing || vm.voiceNote.isRecording" />
+                                <label for="productVoiceNote" class="btn btn-default btn-sm" ng-class="{disabled: vm.voiceNote.isProcessing || vm.voiceNote.isRecording}">
+                                    <span class="fa fa-microphone" aria-hidden="true"></span>
+                                    {{::vm.translate.get('Pick Voice Note')}}
+                                </label>
+                                <button type="button"
+                                        class="btn btn-default btn-sm"
+                                        ng-if="!vm.voiceNote.isRecording"
+                                        ng-click="vm.startVoiceRecording()"
+                                        ng-disabled="vm.voiceNote.isProcessing || !vm.voiceNote.isRecordingSupported">
+                                    <span class="fa fa-circle" aria-hidden="true"></span>
+                                    {{::vm.translate.get('Record')}}
+                                </button>
+                                <button type="button"
+                                        class="btn btn-danger btn-sm"
+                                        ng-if="vm.voiceNote.isRecording"
+                                        ng-click="vm.stopVoiceRecording()">
+                                    <span class="fa fa-stop" aria-hidden="true"></span>
+                                    {{::vm.translate.get('Stop')}}
+                                </button>
+                                <span class="text-muted" ng-if="vm.voiceNote.isProcessing">
+                                    <span class="fa fa-spinner fa-spin" aria-hidden="true"></span>
+                                    {{::vm.translate.get('Converting voice note...')}}
+                                </span>
+                                <span class="text-danger" ng-if="vm.voiceNote.error">{{vm.voiceNote.error}}</span>
+                            </div>-->
+                        </div> 
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">{{::vm.translate.get('Specification')}}</label>
+                        <div class="col-sm-10">
+                            <summernote on-image-upload="vm.specUpload(files)" editor="vm.specEditor" ng-model="vm.product.specification"></summernote>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">{{::vm.translate.get('SKU')}}</label>
+                        <div class="col-sm-10">
+                            <input ng-disabled="!vm.isEditMode" name="sku" ng-model="vm.product.sku" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">{{::vm.translate.get('GTIN')}}</label>
+                        <div class="col-sm-10">
+                            <input ng-disabled="!vm.isEditMode" name="gtin" ng-model="vm.product.gtin" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">{{::vm.translate.get('Price')}}</label>
+                        <div class="col-sm-10">
+                            <div class="input-number">
+                                <input ng-disabled="!vm.isEditMode" id="productPrice" type="text" decimal maxlength="10" name="price" ng-model="vm.product.price" required class="form-control" />
+                                <label for="productPrice" class="form-control">{{vm.product.price | number}}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">{{::vm.translate.get('Old Price')}}</label>
+                        <div class="col-sm-10">
+                            <div class="input-number">
+                                <input ng-disabled="!vm.isEditMode" id="productOldPrice" type="text" decimal maxlength="10" name="oldPrice" ng-model="vm.product.oldPrice" class="form-control" />
+                                <label class="form-control" for="productOldPrice">{{vm.product.oldPrice | number}}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">{{::vm.translate.get('Special Price')}}</label>
+                        <div class="col-sm-10">
+                            <div class="input-number">
+                                <input ng-disabled="!vm.isEditMode" id="productSpecialPrice" type="text" decimal maxlength="10" name="specialPrice" ng-model="vm.product.specialPrice" class="form-control" />
+                                <label class="form-control" for="productSpecialPrice">{{vm.product.specialPrice | number}}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">{{::vm.translate.get('Special Price Start')}}</label>
+                        <div class="col-sm-10">
+                            <p class="input-group simpl-datetime-picker">
+                                <input ng-disabled="!vm.isEditMode" type="text" class="form-control" datetime-picker="dd MMM yyyy HH:mm" ng-model="vm.product.specialPriceStart" is-open="vm.datePickerSpecialPriceStart.open" datepicker-options="vm.datePickerSpecialPriceStart.datepickerOptions" />
+                                <span class="input-group-btn">
+                                    <button ng-disabled="!vm.isEditMode" type="button" class="btn btn-default" ng-click="vm.openCalendar($event, 'datePickerSpecialPriceStart')"><i class="fa fa-calendar"></i></button>
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">{{::vm.translate.get('Special Price End')}}</label>
+                        <div class="col-sm-10">
+                            <p class="input-group simpl-datetime-picker">
+                                <input ng-disabled="!vm.isEditMode" type="text" class="form-control" datetime-picker="dd MMM yyyy HH:mm" ng-model="vm.product.specialPriceEnd" is-open="vm.datePickerSpecialPriceEnd.open" datepicker-options="vm.datePickerSpecialPriceEnd.datepickerOptions" />
+                                <span class="input-group-btn">
+                                    <button ng-disabled="!vm.isEditMode" type="button" class="btn btn-default" ng-click="vm.openCalendar($event, 'datePickerSpecialPriceEnd')"><i class="fa fa-calendar"></i></button>
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" ng-model="vm.product.stockTrackingIsEnabled">{{::vm.translate.get('Enable Stock Tracking')}}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">{{::vm.translate.get('Tax Class')}}</label>
+                        <div class="col-sm-10">
+                            <select ng-disabled="!vm.isEditMode" class="form-control" ng-model="vm.product.taxClassId" ng-options="taxClass.id as taxClass.name for taxClass in vm.taxClasses"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">{{::vm.translate.get('Thumbnail')}}</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" type="file" ngf-select ng-model="vm.thumbnailImage" name="thumbnailImage" ngf-accept="'image/*'">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-top: 8px; flex-wrap: wrap;">
+                                <!-- <button type="button" class="btn btn-info btn-sm" ng-click="vm.generateThumbnail()" ng-disabled="!vm.productImages || vm.productImages.length === 0">
+                                    <span class="glyphicon glyphicon-picture"></span> {{::vm.translate.get('Generate Thumbnail')}}
+                                </button> -->
+                                <div ng-if="vm.thumbnailImage || vm.product.thumbnailImageUrl" style="display: inline-flex; align-items: center; gap: 8px;">
+                                    <img ng-if="vm.thumbnailImage" ngf-src="vm.thumbnailImage" ngf-resize="{width: 80, height: 80, quality: 0.9}" style="width: 80px; height: 80px; object-fit: cover; border: 1px solid #ddd; padding: 2px; background: #fff;">
+                                    <img ng-if="!vm.thumbnailImage && vm.product.thumbnailImageUrl" ng-src="{{vm.product.thumbnailImageUrl}}" style="width: 80px; height: 80px; object-fit: cover; border: 1px solid #ddd; padding: 2px; background: #fff;" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">{{::vm.translate.get('Product Images')}}</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" type="file" ngf-select ng-model="vm.productImages" ngf-multiple="true" name="productImages" ngf-accept="'image/*'">
+                            <div style="display: flex; flex-wrap: wrap; gap: 14px; margin-top: 10px;">
+                                <div ng-repeat="image in vm.product.productImages" style="display: inline-flex; align-items: flex-start; gap: 6px; margin-bottom: 10px;">
+                                    <img ng-src="{{image.mediaUrl}}" style="width: 100px; height: 100px; object-fit: cover; border: 1px solid #ddd; padding: 2px; background: #fff;" />
+                                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                                        <button type="button" ng-click="vm.enhanceImage(image)" ng-disabled="vm.enhancingImage === image" class="btn btn-warning btn-xs" title="Enhance Image" style="padding: 2px 6px;">
+                                            <span class="glyphicon glyphicon-eye-open"></span>
+                                        </button>
+                                        <button type="button" ng-click="vm.removeImage(image)" class="btn btn-danger btn-xs" title="Remove" style="padding: 2px 6px;">
+                                            <span class="glyphicon glyphicon-remove"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div ng-repeat="image in vm.productImages" style="display: inline-flex; align-items: flex-start; gap: 6px; margin-bottom: 10px;">
+                                    <img ngf-src="image" ngf-resize="{width: 100, height: 100, quality: 0.9}" style="width: 100px; height: 100px; object-fit: cover; border: 1px solid #ddd; padding: 2px; background: #fff;" />
+                                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                                        <button type="button" ng-click="vm.enhanceNewImage(image)" ng-disabled="vm.enhancingNewImage === image" class="btn btn-warning btn-xs" title="Enhance Image" style="padding: 2px 6px;">
+                                            <span class="glyphicon glyphicon-eye-open"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">{{::vm.translate.get('Product Documents')}}</label>
+                        <div class="col-sm-10">
+                            <div class="input-group">
+                                <input class="form-control" type="file" ngf-select ng-model="vm.productDocuments" ngf-multiple="true" name="productDocuments" ngf-accept="'.pdf,.doc,.docx,image/*'">
+                                <span class="input-group-btn">
+                                    <!-- <button type="button" class="btn btn-default" ng-click="vm.openPhoneSync()">
+                                        <span class="fa fa-mobile" aria-hidden="true"></span>
+                                        {{::vm.translate.get('Pick from Phone or other device')}}
+                                    </button> -->
+                                </span>
+                            </div>
+                            <span class="product-file-edit" ng-repeat="doc in vm.product.productDocuments">
+                                <a target="_blank" href="{{doc.mediaUrl}}">{{doc.caption}}</a>
+                                <a target="_blank" ng-href="{{doc.mediaUrl}}" class="btn btn-link">
+                                    <span class="fa fa-eye" aria-hidden="true"></span>
+                                    {{::vm.translate.get('Preview')}}
+                                </a>
+                                <a ng-href="{{doc.mediaUrl}}" download="{{doc.caption}}" class="btn btn-link">
+                                    <span class="fa fa-download" aria-hidden="true"></span>
+                                    {{::vm.translate.get('Download')}}
+                                </a>
+                                <button type="button" ng-click="vm.removeDocument(doc)" class="btn btn-link" aria-label="Remove">
+                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                </button>
+                            </span>
+                            <span class="product-file-edit" ng-repeat="file in vm.productDocuments">
+                                <img ng-if="vm.isImageDocument(file)"
+                                     ng-src="{{vm.getDocumentPreviewUrl(file)}}"
+                                     alt="{{file.name}}"
+                                     style="width: 72px; height: 72px; object-fit: cover; border: 1px solid #ddd; border-radius: 4px; padding: 2px; background: #fff;" />
+                                <span>{{file.name}}</span>
+                                <button type="button" ng-click="vm.previewDocument(file)" class="btn btn-link">
+                                    <span class="fa fa-eye" aria-hidden="true"></span>
+                                    {{::vm.translate.get('Preview')}}
+                                </button>
+                                <button type="button" ng-click="vm.downloadDocument(file)" class="btn btn-link">
+                                    <span class="fa fa-download" aria-hidden="true"></span>
+                                    {{::vm.translate.get('Download')}}
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                    <div id="phoneSyncModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="phoneSyncModalTitle">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    <h4 id="phoneSyncModalTitle" class="modal-title">{{::vm.translate.get('Pick from Phone or other device')}}</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p><strong>{{::vm.translate.get('Status')}}:</strong> {{vm.phoneSync.status}}</p>
+                                    <p><strong>{{::vm.translate.get('Session')}}:</strong> {{vm.phoneSync.sessionId}}</p>
+                                    <p>{{::vm.translate.get('Scan this QR code from your phone or another device, select a file, then send it back here.')}}</p>
+                                    <div class="text-center" style="margin-bottom: 15px;">
+                                        <img ng-src="{{vm.phoneSync.qrCodeUrl}}" alt="Phone upload QR code" style="width: 220px; height: 220px; border: 1px solid #ddd; padding: 8px; background: #fff;" />
+                                    </div>
+                                    <div class="input-group">
+                                        <input class="form-control" readonly ng-value="vm.phoneSync.mobileUrl">
+                                        <span class="input-group-btn">
+                                            <a class="btn btn-default" target="_blank" ng-href="{{vm.phoneSync.mobileUrl}}">
+                                                <span class="fa fa-external-link" aria-hidden="true"></span>
+                                                {{::vm.translate.get('Open')}}
+                                            </a>
+                                        </span>
+                                    </div>
+                                    <div class="panel panel-default" ng-if="vm.phoneSync.latestFile" style="margin-top: 15px;">
+                                        <div class="panel-heading">
+                                            <strong>{{::vm.translate.get('Latest received file')}}</strong>
+                                        </div>
+                                        <div class="panel-body">
+                                            <p>{{vm.phoneSync.latestFile.name}}</p>
+                                            <div ng-if="vm.isImageDocument(vm.phoneSync.latestFile)" class="text-center" style="margin-bottom: 10px;">
+                                                <img ng-src="{{vm.getDocumentPreviewUrl(vm.phoneSync.latestFile)}}" alt="{{vm.phoneSync.latestFile.name}}" style="max-width: 100%; max-height: 220px; border: 1px solid #ddd; padding: 6px; background: #fff;" />
+                                            </div>
+                                            <div class="btn-group">
+                                                <button type="button" ng-click="vm.previewDocument(vm.phoneSync.latestFile)" class="btn btn-default">
+                                                    <span class="fa fa-eye" aria-hidden="true"></span>
+                                                    {{::vm.translate.get('Preview')}}
+                                                </button>
+                                                <button type="button" ng-click="vm.downloadDocument(vm.phoneSync.latestFile)" class="btn btn-default">
+                                                    <span class="fa fa-download" aria-hidden="true"></span>
+                                                    {{::vm.translate.get('Download')}}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="alert alert-info" ng-if="vm.phoneSync.receivedFiles.length > 0" style="margin-top: 15px;">
+                                        {{vm.phoneSync.receivedFiles.length}} {{::vm.translate.get('file(s) received and added to Product Documents.')}}
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">{{::vm.translate.get('Close')}}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" ng-model="vm.product.isFeatured">{{::vm.translate.get('Is Featured')}}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" ng-model="vm.product.isPublished">{{::vm.translate.get('Is Published')}}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" ng-model="vm.product.isCallForPricing">{{::vm.translate.get('Is Called For Pricing')}}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" ng-model="vm.product.isAllowToOrder">{{::vm.translate.get('Is Allowed To Order')}}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </uib-tab>
+                <uib-tab index="1" heading="{{::vm.translate.get('Product Variations')}}">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">{{::vm.translate.get('Available Options')}}</label>
+                        <div class="col-sm-10">
+                            <div class="form-group row">
+                                <div class="col-md-3">
+                                    <select class="form-control" ng-model="vm.addingOption" ng-options="opt as opt.name for opt in vm.options"></select>
+                                </div>
+                                <button class="btn btn-default" ng-disabled="!vm.addingOption" ng-click="vm.addOption()">{{::vm.translate.get('Add Option')}}</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-show="vm.product.options.length > 0">
+                        <label class="col-sm-2 control-label">{{::vm.translate.get('Option Values')}}</label>
+                    </div>
+                    <div class="form-group" ng-show="vm.product.options.length > 0">
+                        <div class="col-sm-offset-1 col-sm-11">
+                            <div class="form-group" ng-repeat="option in vm.product.options">
+                                <label class="col-sm-1 control-label">{{option.name}}</label>
+                                <div class="col-sm-11">
+                                    <div class="form-group row">
+                                        <div class="col-md-6">
+                                            <md-chips ng-model="option.values"
+                                                      md-transform-chip="vm.newOptionValue($chip)"
+                                                      md-add-on-blur="true"
+                                                      md-separator-keys="[13,188]"
+                                                      placeholder="Enter a {{option.name}}"
+                                                      delete-button-label="Remove {{option.name}}"
+                                                      delete-hint="Press delete to remove {{option.name}}"
+                                                      secondary-placeholder="+{{option.name}}">
+                                                <md-chip-template>
+                                                    <span>
+                                                        {{$chip.key}}
+                                                    </span>
+                                                </md-chip-template>
+                                            </md-chips>
+                                        </div>
+                                        <product-option-display-directive model-id="option_{{option.id}}" title="Configure Display" option="option"></product-option-display-directive>
+                                        <button class="btn btn-default" data-toggle="modal" data-target="#option_{{option.id}}">{{::vm.translate.get('Configure Display')}}</button>
+                                        <button class="btn btn-default" ng-click="vm.deleteOption(option)">{{::vm.translate.get('Delete Option')}}</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--<div class="form-group" ng-show="vm.product.options.length > 0">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button class="btn btn-default" ng-click="vm.generateOptionCombination()">{{::vm.translate.get('Generate Combinations')}}</button>
+                        </div>
+                    </div>-->
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">{{::vm.translate.get('Product Variations')}}</label>
+                        <div class="col-sm-10">
+                            <table class="table table-striped">
+                                <tr>
+                                    <th class="col-md-2">{{::vm.translate.get('Option Combinations')}}</th>
+                                    <th class="col-md-1">{{::vm.translate.get('SKU')}}</th>
+                                    <th class="col-md-1">{{::vm.translate.get('GTIN')}}</th>
+                                    <th class="col-md-1">{{::vm.translate.get('Price')}}</th>
+                                    <th class="col-md-1">{{::vm.translate.get('Old Price')}}</th>
+                                    <th class="col-md-2">{{::vm.translate.get('Thumbnails')}}</th>
+                                    <th class="col-md-3">{{::vm.translate.get('Images')}}</th>
+                                    <th class="col-md-1">{{::vm.translate.get('Actions')}}</th>
+                                </tr>
+                                <tr ng-repeat="variation in vm.product.variations">
+                                    <td>{{variation.name}}</td>
+                                    <td>
+                                        <input id="{{variation.normalizedName}}Sku" type="text" maxlength="100" class="form-control" ng-model="variation.sku" />
+                                    </td>
+                                    <td>
+                                        <input id="{{variation.normalizedName}}Gtin" type="text" maxlength="100" class="form-control" ng-model="variation.gtin" />
+                                    </td>
+                                    <td>
+                                        <div class="input-number">
+                                            <input id="{{variation.normalizedName}}Price" type="text" decimal maxlength="10" required class="form-control" ng-model="variation.price" />
+                                            <label for="{{variation.normalizedName}}Price" class="form-control">{{variation.price | number}}</label>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="input-number">
+                                            <input id="{{variation.normalizedName}}OldPrice" type="text" decimal maxlength="10" class="form-control" ng-model="variation.oldPrice" />
+                                            <label for="{{variation.normalizedName}}OldPrice" class="form-control">{{variation.oldPrice | number}}</label>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <input class="form-control" type="file" ngf-select ng-model="variation.newThumbnailImage" name="variationThumbnailImage" ngf-accept="'image/*'">
+                                        <img ngf-src="variation.newThumbnailImage" ngf-resize="{width:50, height: 50, quality: 0.9}">
+                                        <img ng-show="!variation.newThumbnailImage && variation.thumbnailImageUrl" ng-src="{{variation.thumbnailImageUrl}}" style="width: 50px; height: 50px" />
+                                    </td>
+                                    <td>
+                                        <input class="form-control" type="file" ngf-select ng-model="variation.newImages" ngf-multiple="true" name="variationImages" ngf-accept="'image/*'">
+                                        <span class="product-image-edit" ng-repeat="image in variation.imageUrls">
+                                            <img ng-src="{{image}}" style="width: 50px; height: 50px" />
+                                        </span>
+                                        <span ng-repeat="image in variation.newImages">
+                                            <img ngf-src="image" ngf-resize="{width: 50, height: 50, quality: 0.9}">
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button ng-click="vm.deleteVariation(variation)" type="button" class="btn">
+                                            <span class="glyphicon glyphicon-remove"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr ng-show="vm.product.options.length > 0">
+                                    <td class="variation-form" colspan="8">
+                                        <ng-form name="addingVariationForm">
+                                            <table class="table">
+                                                <tr>
+                                                    <td class="col-md-2">
+                                                        <div ng-repeat="option in vm.product.options">
+<div class="admin-product-form">
+                                                                <select ng-if="option.values && option.values.length > 0"
+                                                                        class="form-control"
+                                                                        ng-model="vm.addingVariation[option.name]"
+                                                                        ng-options="value.key as value.key for value in option.values | filter: vm.filterAddedOptionValue"></select>
+                                                                <input ng-if="!option.values || option.values.length === 0"
+                                                                       type="text"
+                                                                       class="form-control"
+                                                                       ng-model="vm.addingVariation[option.name]"
+                                                                       placeholder="Enter {{option.name}}" />
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="col-md-1">
+                                                        <input id="addingVariationSku" type="text" maxlength="100" class="form-control" ng-model="vm.addingVariation.sku" />
+                                                    </td>
+                                                    <td class="col-md-1">
+                                                        <input id="addingVariationGtin" type="text" maxlength="100" class="form-control" ng-model="vm.addingVariation.gtin" />
+                                                    </td>
+                                                    <td class="col-md-1">
+                                                        <div class="input-number">
+                                                            <input id="addingVariationPrice" type="text" decimal maxlength="10" class="form-control" ng-model="vm.addingVariation.price" />
+                                                            <label for="addingVariationPrice" class="form-control">{{vm.addingVariation.price | number}}</label>
+                                                        </div>
+                                                    </td>
+                                                    <td class="col-md-1">
+                                                        <div class="input-number">
+                                                            <input id="addingVariationOldPrice" type="text" decimal maxlength="10" class="form-control" ng-model="vm.addingVariation.oldPrice" />
+                                                            <label for="addingVariationOldPrice" class="form-control">{{vm.addingVariation.oldPrice | number}}</label>
+                                                        </div>
+                                                    </td>
+                                                    <td class="col-md-2"></td>
+                                                    <td class="col-md-3"></td>
+                                                    <td class="col-md-1"><button type="button" class="btn btn-primary" ng-disabled="!vm.isAddVariationFormValid()" ng-click="vm.addVariation()"><span class="glyphicon glyphicon-plus"></span></button></td>
+                                                </tr>
+                                            </table>
+                                        </ng-form>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </uib-tab>
+                <uib-tab index="2" heading="{{::vm.translate.get('Product Attributes')}}">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">{{::vm.translate.get('Product Templates')}}</label>
+                        <div class="col-sm-10">
+                            <div class="form-group row">
+                                <div class="col-md-3">
+                                    <select class="form-control" ng-model="vm.product.template" ng-options="template as template.name for template in vm.productTemplates"></select>
+                                </div>
+                                <button class="btn btn-default" ng-disabled="!vm.product.template" ng-click="vm.applyTemplate()">{{::vm.translate.get('Apply')}}</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">{{::vm.translate.get('Available Attributes')}}</label>
+                        <div class="col-sm-10">
+                            <div class="form-group row">
+                                <div class="col-md-3">
+                                    <select class="form-control" ng-model="vm.addingAttribute" ng-options="attr as attr.name group by attr.groupName for attr in vm.attributes"></select>
+                                </div>
+                                <button class="btn btn-default" ng-disabled="!vm.addingAttribute" ng-click="vm.addAttribute()">{{::vm.translate.get('Add Attribute')}}</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">{{::vm.translate.get('Product Attributes')}}</label>
+                        <div class="col-sm-10">
+                            <table class="table table-striped">
+                                <tr>
+                                    <th>{{::vm.translate.get('Attribute Name')}}</th>
+                                    <th>{{::vm.translate.get('Value')}}</th>
+                                    <th>{{::vm.translate.get('Actions')}}</th>
+                                </tr>
+                                <tr ng-repeat="attr in vm.product.attributes">
+                                    <td>{{attr.name}}</td>
+                                    <td>
+                                        <div class="input-group">
+                                            <input type="text"
+                                                   class="form-control"
+                                                   ng-model="attr.value"
+                                                   ng-change="vm.onGiTagValueChanged(attr)"
+                                                   ng-attr-placeholder="{{vm.isGiTagAttribute(attr) && 'IICT-GI-343KF9D' || ''}}" />
+                                            <span class="input-group-addon"
+                                                  ng-if="vm.isGiTagAttribute(attr) && (vm.giTagValidation.status === 'verified' || vm.giTagValidation.status === 'validating' || vm.giTagValidation.status === 'notVerified')"
+                                                  ng-class="{
+                                                    'text-success': vm.giTagValidation.status === 'verified',
+                                                    'text-danger': vm.giTagValidation.status === 'notVerified',
+                                                    'text-info': vm.giTagValidation.status === 'validating'
+                                                  }">
+                                                <span ng-if="vm.giTagValidation.status === 'verified'" class="text-success">
+                                                    <span class="glyphicon glyphicon-ok text-success" style="color: #198754;"></span> {{::vm.translate.get('Verified')}}
+                                                </span>
+                                                <span ng-if="vm.giTagValidation.status === 'validating'">
+                                                    <span class="fa fa-spinner fa-spin"></span> {{::vm.translate.get('Validating')}}
+                                                </span>
+                                                <span ng-if="vm.giTagValidation.status === 'notVerified'" class="text-danger">
+                                                    <span class="glyphicon glyphicon-remove text-danger" style="color: #dc3545;"></span> {{::vm.translate.get('Not verified')}}
+                                                </span>
+                                            </span>
+                                        </div>
+                                        <p ng-if="vm.isGiTagAttribute(attr) && vm.giTagValidation.status === 'verified' && vm.giTagValidation.response"
+                                           class="help-block text-success">
+                                            {{vm.giTagValidation.response.giTagName || vm.giTagValidation.response.productName}}<span ng-if="vm.giTagValidation.response.geographicalOrigin"> - {{vm.giTagValidation.response.geographicalOrigin}}</span>
+                                        </p>
+                                        <p ng-if="vm.isGiTagAttribute(attr) && vm.giTagValidation.status === 'notVerified'"
+                                           class="help-block text-danger">
+                                            {{vm.giTagValidation.message}}
+                                        </p>
+                                    </td>
+                                    <td>
+                                        <button ng-click="vm.deleteAttribute(attr)" type="button" class="btn">
+                                            <span class="glyphicon glyphicon-remove"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </uib-tab>
+                <uib-tab index="3" heading="{{::vm.translate.get('Category Mapping')}}">
+                    <md-content class="md-padding">
+                        <md-input-container class="md-block">
+                            <div ng-repeat="category in vm.categories">
+                                <md-checkbox ng-checked="vm.product.categoryIds.indexOf(category.id) > -1" ng-click="vm.toggleCategories(category.id)">
+                                    {{ category.name }}
+                                </md-checkbox>
+                            </div>
+                        </md-input-container>
+                    </md-content>
+                </uib-tab>
+                <uib-tab index="4" heading="{{::vm.translate.get('Related Products')}}">
+                    <product-selection-directive model-id="productRelationSelector" title="Add related products" is-visible-individually="true" selected-products="vm.product.relatedProducts"></product-selection-directive>
+                    <p><button type="button" class="btn btn-default" data-toggle="modal" data-target="#productRelationSelector">{{::vm.translate.get('Manage Related Products')}}</button></p>
+                    <table class="table table-striped">
+                        <tr>
+                            <th>{{::vm.translate.get('Name')}}</th>
+                            <th class="text-center">{{::vm.translate.get('Is Published')}}</th>
+                        </tr>
+                        <tr ng-repeat="product in vm.product.relatedProducts">
+                            <td>{{product.name}}</td>
+                            <td class="text-center"><i ng-attr-class="{{product.isPublished && 'fa fa-circle' || 'fa fa-circle-o'}}"></i></td>
+                        </tr>
+                    </table>
+                </uib-tab>
+                <uib-tab index="5" heading="{{::vm.translate.get('Cross-sell Products')}}">
+                    <product-selection-directive model-id="productCrossSellSelector" title="Add cross-sell products" is-visible-individually="true" selected-products="vm.product.crossSellProducts"></product-selection-directive>
+                    <p><button type="button" class="btn btn-default" data-toggle="modal" data-target="#productCrossSellSelector">{{::vm.translate.get('Manage Cross-sell Products')}}</button></p>
+                    <table class="table table-striped">
+                        <tr>
+                            <th>{{::vm.translate.get('Name')}}</th>
+                            <th class="text-center">{{::vm.translate.get('Is Published')}}</th>
+                        </tr>
+                        <tr ng-repeat="product in vm.product.crossSellProducts">
+                            <td>{{product.name}}</td>
+                            <td class="text-center"><i ng-attr-class="{{product.isPublished && 'fa fa-circle' || 'fa fa-circle-o'}}"></i></td>
+                        </tr>
+                    </table>
+                </uib-tab>
+                <uib-tab index="6" heading="{{::vm.translate.get('SEO')}}">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">{{::vm.translate.get('Meta Title')}}</label>
+                        <div class="col-sm-10">
+                            <input name="metaTitle" ng-model="vm.product.metaTitle" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">{{::vm.translate.get('Meta Keywords')}}</label>
+                        <div class="col-sm-10">
+                            <textarea name="metaKeywords" ng-model="vm.product.metaKeywords" class="form-control" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">{{::vm.translate.get('Meta Description')}}</label>
+                        <div class="col-sm-10">
+                            <textarea name="metaDescription" ng-model="vm.product.metaDescription" class="form-control" rows="3"></textarea>
+                        </div>
+                    </div>
+                </uib-tab>
+            </uib-tabset>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <div class="alert alert-warning" ng-if="!vm.isGiTagSaveAllowed() && vm.getGiTagSaveBlockMessage()">
+                        {{vm.getGiTagSaveBlockMessage()}}
+                    </div>
+                    <button type="button" class="btn btn-primary" ng-disabled="productForm.$invalid || !vm.isGiTagSaveAllowed()" ng-click="vm.save()"><span class="glyphicon glyphicon-ok"></span>{{::vm.translate.get('Save')}}</button>
+                    <button ui-sref="product" class="btn btn-default">{{::vm.translate.get('Cancel')}}</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

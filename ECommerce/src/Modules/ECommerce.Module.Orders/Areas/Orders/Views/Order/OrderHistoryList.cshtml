@@ -1,0 +1,80 @@
+@model IEnumerable<ECommerce.Module.Orders.Areas.Orders.ViewModels.OrderHistoryListItem>
+@{
+    ViewData["Title"] = Localizer["Order History"];
+    ViewData["HideChrome"] = true;
+}
+
+<div class="acct-shell acct-shell--dashboard">
+    <div class="acct-body acct-body--dashboard">
+        <partial name="_AccountMenu" />
+
+        <main class="acct-content acct-dashboard">
+            <section class="acct-dashboard-hero acct-dashboard-hero--compact">
+                <div class="acct-dashboard-hero__copy">
+                    <span class="acct-kicker">@Localizer["Purchases"]</span>
+                    <h1>@ViewData["Title"]</h1>
+                    <p>@Localizer["Review recent orders, product quantities, totals, and fulfillment status."]</p>
+                </div>
+                <div class="acct-dashboard-hero__panel">
+                    <span>@Localizer["Orders"]</span>
+                    <strong>@Model.Count()</strong>
+                    <small>@Localizer["Your completed and active orders appear below."]</small>
+                </div>
+            </section>
+
+            <section class="acct-form-panel acct-table-panel">
+                <div class="acct-form-panel__header">
+                    <div>
+                        <span class="acct-card-label">@Localizer["Order activity"]</span>
+                        <h2>@ViewData["Title"]</h2>
+                    </div>
+                    <a href="~/user" class="acct-secondary-action">@Localizer["Back to dashboard"]</a>
+                </div>
+
+                @if (!Model.Any())
+                {
+                    <p class="acct-empty-state">@Localizer["You have no orders yet."]</p>
+                }
+                else
+                {
+                    <div class="acct-table-wrap">
+                    <table class="acct-table">
+                        <thead>
+                            <tr>
+                                <th>@Localizer["Order Id"]</th>
+                                <th>@Localizer["Date"]</th>
+                                <th>@Localizer["Products"]</th>
+                                <th>@Localizer["SubTotal"]</th>
+                                <th>@Localizer["Status"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var order in Model)
+                            {
+                                <tr>
+                                    <td><a href="~/user/orders/@order.Id" class="acct-table-link">#@order.Id</a></td>
+                                    <td>@order.CreatedOn.DateTime.ToShortDateString()</td>
+                                    <td>
+                                        @foreach (var item in order.OrderItems)
+                                        {
+                                            <div class="acct-product-mini">
+                                                <img src="@item.ThumbnailImage" alt="@item.ProductName" />
+                                                <div>
+                                                    <strong>@item.ProductName</strong>
+                                                    <span>x@item.Quantity</span>
+                                                </div>
+                                            </div>
+                                        }
+                                    </td>
+                                    <td class="acct-strong">@order.SubTotalString</td>
+                                    <td><span class="acct-badge">@Localizer[order.OrderStatus.ToString()]</span></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    </div>
+                }
+            </section>
+        </main>
+    </div>
+</div>

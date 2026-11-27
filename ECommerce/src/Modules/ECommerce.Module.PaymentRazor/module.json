@@ -1,0 +1,6 @@
+{
+  "id": "ECommerce.Module.PaymentRazor",
+  "name": "Razorpay Payment",
+  "isBundledWithHost": true,
+  "version": "1.0.0"
+}

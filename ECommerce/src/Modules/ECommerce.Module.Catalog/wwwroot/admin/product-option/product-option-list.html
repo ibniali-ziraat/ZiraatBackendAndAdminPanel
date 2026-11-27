@@ -1,0 +1,38 @@
+﻿<div class="page-header">
+    <div class="row">
+        <div class="col-md-8">
+            <h2>{{::vm.translate.get('Product Options')}}</h2>
+        </div>
+        <div class="col-md-4 text-right">
+            <a ui-sref="product-option-create" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> {{::vm.translate.get('Create Product Option')}}</a>
+        </div>
+    </div>
+</div>
+
+<table class="table table-condensed table-striped">
+    <thead>
+    <tr>
+        <th>{{::vm.translate.get('Name')}}</th>
+        <th>{{::vm.translate.get('Actions')}}</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="option in vm.productOptions">
+        <td>{{option.name}}</td>
+        <td class="text-center">
+            <div class="dropdown" style="display:inline-block">
+                <button class="btn btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-cog"></i> <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li>
+                        <a ui-sref="product-option-edit({id: option.id})">
+                            <span class="glyphicon glyphicon-pencil"></span> {{::vm.translate.get('Edit')}}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>

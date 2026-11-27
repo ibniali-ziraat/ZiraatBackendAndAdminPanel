@@ -1,0 +1,94 @@
+﻿<div class="page-header">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>{{::vm.translate.get('State or Province')}}</h2>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="form-group">
+        <label class="col-sm-1 control-label">{{::vm.translate.get('Countries')}}</label>
+        <div class="col-sm-3">
+            <select class="form-control" ng-model="vm.countryId" ng-change="vm.onCountrySelected(vm.countryId)" ng-options="''+ country.id as country.name for country in vm.countries"></select>
+        </div>
+    </div>
+</div>
+
+<hr />
+
+<div class="row" ng-show="vm.countryId">
+    <div class="col-md-12 text-right">
+        <a ui-sref="state-province-create({countryId: vm.countryId})" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> {{::vm.translate.get('Create State or Providence')}}</a>
+    </div>
+</div>
+
+<div class="row">
+    <table class="table table-striped" st-pipe="vm.getStateOrProvinces" st-table="vm.stateOrProvinces">
+        <thead>
+            <tr>
+                <th st-sort="Name" class="sortable">{{::vm.translate.get('Name')}}</th>
+                <th st-sort="Code" class="sortable">{{::vm.translate.get('Code')}}</th>
+                <th st-sort="CountryId" class="sortable">{{::vm.translate.get('CountryId')}}</th>
+                <th></th>
+            </tr>
+            <tr>
+                <th>
+                    <div class="form-group">
+                        <input class="form-control" st-search="Name" />
+                    </div>
+                </th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+            <tr>
+                <th ng-show="!vm.isLoading" colspan="4">{{vm.tableStateRef.pagination.totalItemCount | number:0}} {{::vm.translate.get('records found')}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="stateOrProvince in vm.stateOrProvinces">
+                <td>{{stateOrProvince.name}}</td>
+                <td>{{stateOrProvince.code}}</td>
+                <td>{{stateOrProvince.countryId}}</td>
+                <td class="text-center">
+                    <div class="dropdown" style="display:inline-block">
+                        <button class="btn btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-cog"></i> <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li>
+                                <a ui-sref="state-province-edit({id: stateOrProvince.id, countryId: vm.countryId})">
+                                    <span class="glyphicon glyphicon-pencil"></span> {{::vm.translate.get('Edit')}}
+                                </a>
+                            </li>
+                            <li role="separator" class="divider"></li>
+                            <li>
+                                <a ui-sref="state-province-edit({id: stateOrProvince.id, countryId: vm.countryId, tab: 'districts'})">
+                                    <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> {{::vm.translate.get('Districts')}}
+                                </a>
+                            </li>
+                            <li role="separator" class="divider"></li>
+                            <li>
+                                <a href ng-click="vm.deleteStateOrProvince(stateOrProvince)" style="color:#c0392b">
+                                    <span class="glyphicon glyphicon-remove"></span> {{::vm.translate.get('Delete')}}
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+        <tbody ng-show="vm.isLoading">
+            <tr>
+                <td colspan="4" class="text-center">Loading ... </td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td class="text-center" st-pagination="" st-items-by-page="50" st-displayed-pages="10" colspan="4"></td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+

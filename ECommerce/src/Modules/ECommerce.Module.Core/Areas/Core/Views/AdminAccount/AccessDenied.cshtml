@@ -1,0 +1,20 @@
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Access Denied - ECommerce</title>
+    <link simpl-append-version="true" rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+</head>
+<body>
+    <div class="container" style="max-width: 560px; margin-top: 80px;">
+        <h2>@Localizer["Access denied"]</h2>
+        <p>@Localizer["You do not have permission to access the admin area."]</p>
+        <a href="/admin/login" class="btn btn-primary">@Localizer["Back to login"]</a>
+    </div>
+</body>
+</html>

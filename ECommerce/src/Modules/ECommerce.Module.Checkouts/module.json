@@ -1,0 +1,6 @@
+{
+  "id": "ECommerce.Module.Checkouts",
+  "name": "Checkout module",
+  "isBundledWithHost": true,
+  "version": "1.0.0"
+}

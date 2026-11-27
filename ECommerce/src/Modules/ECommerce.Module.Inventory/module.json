@@ -1,0 +1,6 @@
+{
+  "id": "ECommerce.Module.Inventory",
+  "name": "Inventory",
+  "isBundledWithHost": true,
+  "version": "1.0.0"
+}

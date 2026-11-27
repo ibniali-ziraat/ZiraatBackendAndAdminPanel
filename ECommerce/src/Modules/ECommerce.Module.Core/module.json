@@ -1,0 +1,6 @@
+{
+  "id": "ECommerce.Module.Core",
+  "name": "Core",
+  "isBundledWithHost": true,
+  "version": "1.0.0"
+}

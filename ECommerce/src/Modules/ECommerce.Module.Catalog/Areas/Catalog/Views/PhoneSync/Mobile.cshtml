@@ -1,0 +1,353 @@
+﻿@{
+    Layout = null;
+    var sessionId = ViewData["SessionId"] as string;
+}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pick from phone</title>
+    <link simpl-append-version="true" rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link simpl-append-version="true" rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.css" />
+    <style>
+        body {
+            background: #f6f8fb;
+            color: #172033;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .phone-sync-page {
+            margin: 0 auto;
+            max-width: 520px;
+        }
+
+        .phone-sync-card {
+            background: #fff;
+            border: 1px solid #e3e8ef;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+            margin-bottom: 16px;
+            padding: 18px;
+        }
+
+        .phone-sync-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin: 0 0 8px;
+        }
+
+        .phone-sync-status {
+            color: #526173;
+            margin-bottom: 0;
+            word-break: break-word;
+        }
+
+        .phone-sync-preview {
+            display: none;
+            margin-top: 14px;
+        }
+
+        .phone-sync-preview img {
+            border: 1px solid #d8dee8;
+            border-radius: 6px;
+            max-height: 260px;
+            max-width: 100%;
+        }
+
+        .phone-sync-file-name {
+            color: #526173;
+            margin-top: 10px;
+            word-break: break-word;
+        }
+
+        .phone-sync-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .phone-sync-actions .btn {
+            flex: 1;
+        }
+
+        .phone-sync-loader {
+            align-items: center;
+            background: rgba(255, 255, 255, 0.86);
+            border-radius: 8px;
+            display: none;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 14px;
+            padding: 12px;
+        }
+
+        .phone-sync-spinner {
+            animation: phone-sync-spin 0.8s linear infinite;
+            border: 3px solid #d7e2f0;
+            border-top-color: #337ab7;
+            border-radius: 50%;
+            height: 24px;
+            width: 24px;
+        }
+
+        .phone-sync-card.is-busy label,
+        .phone-sync-card.is-busy button {
+            pointer-events: none;
+            opacity: 0.72;
+        }
+
+        @@keyframes phone-sync-spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .phone-sync-done {
+            display: none;
+            margin-top: 14px;
+        }
+    </style>
+</head>
+<body>
+    <main class="phone-sync-page">
+        <section id="phoneSyncUploadCard" class="phone-sync-card">
+            <h1 class="phone-sync-title">Pick from phone</h1>
+            <p class="phone-sync-status"><strong>Status:</strong> <span id="phoneSyncStatus">Connecting...</span></p>
+            <p class="phone-sync-status"><strong>Session:</strong> @sessionId</p>
+        </section>
+
+        <section class="phone-sync-card">
+            <label class="btn btn-primary btn-block">
+                <i class="fa fa-camera" aria-hidden="true"></i>
+                Camera
+                <input id="phoneSyncCamera" type="file" accept="image/*" capture="environment" hidden />
+            </label>
+            <label class="btn btn-default btn-block">
+                <i class="fa fa-folder-open" aria-hidden="true"></i>
+                Browse
+                <input id="phoneSyncFile" type="file" accept=".pdf,.doc,.docx,image/*" hidden />
+            </label>
+            <div id="phoneSyncPreview" class="phone-sync-preview">
+                <img id="phoneSyncPreviewImage" alt="Selected file preview" />
+                <p id="phoneSyncFileName" class="phone-sync-file-name"></p>
+            </div>
+            <div class="phone-sync-actions">
+                <button id="phoneSyncSend" type="button" class="btn btn-success" disabled>
+                    <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                    Send
+                </button>
+            </div>
+            <div id="phoneSyncLoader" class="phone-sync-loader">
+                <span class="phone-sync-spinner" aria-hidden="true"></span>
+                <span id="phoneSyncLoaderText">Uploading...</span>
+            </div>
+            <div id="phoneSyncDone" class="alert alert-success phone-sync-done">
+                File sent. This window will close automatically.
+            </div>
+        </section>
+    </main>
+
+    <script simpl-append-version="true" src="~/lib/signalr/dist/browser/signalr.js"></script>
+    <script>
+        (function () {
+            "use strict";
+
+            var sessionId = "@sessionId";
+            var selectedFile = null;
+            var selectedDataUrl = "";
+            var selectedFileName = "";
+            var selectedContentType = "";
+            var selectedSource = "";
+            var statusEl = document.getElementById("phoneSyncStatus");
+            var cameraInput = document.getElementById("phoneSyncCamera");
+            var fileInput = document.getElementById("phoneSyncFile");
+            var sendButton = document.getElementById("phoneSyncSend");
+            var uploadCard = document.getElementById("phoneSyncUploadCard");
+            var loader = document.getElementById("phoneSyncLoader");
+            var loaderText = document.getElementById("phoneSyncLoaderText");
+            var doneMessage = document.getElementById("phoneSyncDone");
+            var preview = document.getElementById("phoneSyncPreview");
+            var previewImage = document.getElementById("phoneSyncPreviewImage");
+            var fileName = document.getElementById("phoneSyncFileName");
+
+            function setStatus(status) {
+                statusEl.textContent = status;
+            }
+
+            function setBusy(isBusy, message) {
+                uploadCard.classList.toggle("is-busy", isBusy);
+                loader.style.display = isBusy ? "flex" : "none";
+                loaderText.textContent = message || "Uploading...";
+                sendButton.disabled = isBusy || !selectedDataUrl;
+                cameraInput.disabled = isBusy;
+                fileInput.disabled = isBusy;
+            }
+
+            function closeAfterSuccess() {
+                doneMessage.textContent = selectedSource === "camera"
+                    ? "Photo sent. This window will close automatically."
+                    : "File sent. This window will close automatically.";
+                doneMessage.style.display = "block";
+
+                window.setTimeout(function () {
+                    var closeWindow = function () {
+                        window.open("", "_self");
+                        window.close();
+                    };
+
+                    if (connection && connection.stop) {
+                        connection.stop().then(closeWindow).catch(closeWindow);
+                    } else {
+                        closeWindow();
+                    }
+
+                    window.setTimeout(function () {
+                        setStatus("Sent. You can close this window.");
+                    }, 400);
+                }, 700);
+            }
+
+            function readFileAsDataUrl(file) {
+                return new Promise(function (resolve, reject) {
+                    var reader = new FileReader();
+                    reader.onload = function () { resolve(reader.result); };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            function loadImage(dataUrl) {
+                return new Promise(function (resolve, reject) {
+                    var image = new Image();
+                    image.onload = function () { resolve(image); };
+                    image.onerror = reject;
+                    image.src = dataUrl;
+                });
+            }
+
+            function getCompressedImageDataUrl(dataUrl) {
+                return loadImage(dataUrl).then(function (image) {
+                    var maxSize = 1600;
+                    var width = image.naturalWidth || image.width;
+                    var height = image.naturalHeight || image.height;
+                    var scale = Math.min(1, maxSize / Math.max(width, height));
+                    var canvas = document.createElement("canvas");
+                    var context;
+
+                    canvas.width = Math.round(width * scale);
+                    canvas.height = Math.round(height * scale);
+                    context = canvas.getContext("2d");
+                    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+                    return canvas.toDataURL("image/jpeg", 0.82);
+                });
+            }
+
+            function getTransferDataUrl(file, dataUrl) {
+                if (file.type && file.type.indexOf("image/") === 0) {
+                    selectedContentType = "image/jpeg";
+                    selectedFileName = (file.name || ("phone-image-" + Date.now() + ".jpg")).replace(/\.[^.]+$/, ".jpg");
+                    return getCompressedImageDataUrl(dataUrl);
+                }
+
+                selectedContentType = file.type || "application/octet-stream";
+                selectedFileName = file.name || ("phone-file-" + Date.now());
+                return Promise.resolve(dataUrl);
+            }
+
+            var connection = new signalR.HubConnectionBuilder()
+                .withUrl("/hubs/phone-sync")
+                .build();
+
+            connection.start()
+                .then(function () {
+                    return connection.invoke("JoinSession", sessionId, "phone");
+                })
+                .then(function () {
+                    setStatus("Connected to desktop");
+                })
+                .catch(function () {
+                    setStatus("Could not connect to desktop");
+                });
+
+            function handlePickedFile(input, source) {
+                selectedFile = input.files && input.files[0];
+                selectedDataUrl = "";
+                selectedFileName = "";
+                selectedContentType = "";
+                selectedSource = source || "";
+                sendButton.disabled = true;
+                setBusy(false);
+
+                if (!selectedFile) {
+                    preview.style.display = "none";
+                    return;
+                }
+
+                setStatus("Preparing preview...");
+                setBusy(true, "Preparing preview...");
+
+                readFileAsDataUrl(selectedFile).then(function (dataUrl) {
+                    fileName.textContent = selectedFile.name;
+                    preview.style.display = "block";
+
+                    if (selectedFile.type && selectedFile.type.indexOf("image/") === 0) {
+                        previewImage.src = dataUrl;
+                        previewImage.style.display = "block";
+                    } else {
+                        previewImage.removeAttribute("src");
+                        previewImage.style.display = "none";
+                    }
+
+                    return getTransferDataUrl(selectedFile, dataUrl);
+                }).then(function (transferDataUrl) {
+                    selectedDataUrl = transferDataUrl;
+                    setBusy(false);
+                    setStatus("Preview ready");
+                }).catch(function () {
+                    selectedFile = null;
+                    selectedDataUrl = "";
+                    setBusy(false);
+                    setStatus("Could not prepare this file");
+                });
+            }
+
+            cameraInput.addEventListener("change", function () {
+                handlePickedFile(cameraInput, "camera");
+            });
+
+            fileInput.addEventListener("change", function () {
+                handlePickedFile(fileInput, "browse");
+            });
+
+            sendButton.addEventListener("click", function () {
+                if (!selectedFile || !selectedDataUrl) {
+                    return;
+                }
+
+                sendButton.disabled = true;
+                setStatus("Sending...");
+                setBusy(true, "Uploading to web portal...");
+
+                connection.invoke("SendFileToDesktop", {
+                    sessionId: sessionId,
+                    fileName: selectedFileName,
+                    contentType: selectedContentType,
+                    dataUrl: selectedDataUrl
+                }).then(function () {
+                    setStatus(selectedSource === "camera" ? "Photo sent to desktop" : "Sent to desktop");
+                    setBusy(false);
+                    closeAfterSuccess();
+                }).catch(function (error) {
+                    setStatus("Could not send file: " + (error && error.message ? error.message : "connection failed"));
+                    setBusy(false);
+                });
+            });
+        }());
+    </script>
+</body>
+</html>

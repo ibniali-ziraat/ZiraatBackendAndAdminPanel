@@ -1,0 +1,74 @@
+﻿<div class="page-header">
+    <div class="row">
+        <div class="col-md-8">
+            <h2>{{ ::vm.translate.get('News Item List')}}</h2>
+        </div>
+        <div class="col-md-4 text-right">
+            <a ui-sref="news-items-create" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span>{{ ::vm.translate.get('Create News Item')}}</a>
+        </div>
+    </div>
+</div>
+
+<table class="table table-striped" st-pipe="vm.getNewsItems" st-table="vm.newsItems">
+    <thead>
+        <tr>
+            <th st-sort="Name" class="sortable">{{ ::vm.translate.get('Name')}}</th>
+            <th>Url</th>
+            <th class="text-center">{{::vm.translate.get('Is Published')}}</th>
+            <th st-sort="CreatedOn" class="sortable">{{ ::vm.translate.get('CreatedOn')}}</th>
+            <th>{{ ::vm.translate.get('Actions')}}</th>
+        </tr>
+        <tr>
+            <th>
+                <div class="form-group">
+                    <input class="form-control" st-search="Name" />
+                </div>
+            </th>
+            <th></th>
+            <th></th>
+            <th><st-date-range predicate="CreatedOn" before="query.before" after="query.after"></st-date-range></th>
+            <th></th>
+        </tr>
+        <tr>
+            <th ng-show="!vm.isLoading" colspan="5">{{vm.tableStateRef.pagination.totalItemCount | number:0}} {{::vm.translate.get('records found')}}</th>
+        </tr>
+    </thead>
+    <tbody ng-show="!vm.isLoading">
+        <tr ng-repeat="newsItem in vm.newsItems">
+            <td>{{newsItem.name}}</td>
+            <td>{{newsItem.slug}}</td>
+            <td class="text-center"><i ng-attr-class="{{newsItem.isPublished && 'fa fa-circle' || 'fa fa-circle-o'}}"></i></td>
+            <td>{{newsItem.createdOn | date:'medium'}}</td>
+            <td class="text-center">
+                <div class="dropdown" style="display:inline-block">
+                    <button class="btn btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-cog"></i> <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li>
+                            <a ui-sref="news-items-edit({id: newsItem.id})">
+                                <span class="glyphicon glyphicon-pencil"></span> {{ ::vm.translate.get('Edit')}}
+                            </a>
+                        </li>
+                        <li role="separator" class="divider"></li>
+                        <li>
+                            <a href ng-click="vm.deleteNewsItem(newsItem)" style="color:#c0392b">
+                                <span class="glyphicon glyphicon-remove"></span> {{ ::vm.translate.get('Delete')}}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+    <tbody ng-show="vm.isLoading">
+        <tr>
+            <td colspan="5" class="text-center">Loading ... </td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td class="text-center" st-pagination="" st-items-by-page="50" st-displayed-pages="10" colspan="5"></td>
+        </tr>
+    </tfoot>
+</table>

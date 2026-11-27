@@ -1,0 +1,571 @@
+﻿@model LoginViewModel
+
+@{
+    ViewData["Title"] = Localizer["Log in"];
+    ViewData["HideChrome"] = true;
+}
+
+<style>
+    body.glass-theme,
+    body.invenzo-auth-shell,
+    body.account-auth-shell {
+        min-height: 100vh;
+        background:
+            radial-gradient(circle at top left, rgba(111, 214, 152, 0.2), transparent 36%),
+            radial-gradient(circle at bottom right, rgba(253, 224, 137, 0.16), transparent 30%),
+            linear-gradient(180deg, #f6fbf7 0%, #fcfaf5 100%);
+    }
+
+    .invenzo-auth-shell .invenzo-main--auth,
+    .account-auth-shell .body-content.account-login-shell {
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+    }
+
+    .body-content.account-login-shell {
+        max-width: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .body-content.account-login-shell > .glass-container {
+        padding: 0 !important;
+        background: transparent;
+        box-shadow: none;
+        border-radius: 0;
+    }
+
+    .account-login-stage {
+        position: relative;
+        margin: 0 auto;
+        max-width: 1180px;
+        min-height: 100vh;
+        padding: 42px 24px;
+        display: flex;
+        align-items: center;
+    }
+
+    .account-login-layout {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(360px, 0.95fr) minmax(380px, 440px);
+        gap: 0;
+        align-items: stretch;
+        width: 100%;
+        min-height: 640px;
+        border: 1px solid rgba(20, 83, 45, 0.12);
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.82);
+        box-shadow: 0 20px 60px rgba(20, 83, 45, 0.12);
+        overflow: hidden;
+    }
+
+    .account-login-story {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 42px;
+        background:
+            linear-gradient(135deg, rgba(20, 83, 45, 0.94), rgba(31, 122, 77, 0.9)),
+            linear-gradient(180deg, #14532d, #0f6c3e);
+        color: #ffffff;
+    }
+
+    .account-login-brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        color: #ffffff;
+        font-weight: 800;
+        text-decoration: none;
+    }
+
+    .account-login-brand img {
+        width: 42px;
+        height: 42px;
+        object-fit: contain;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.96);
+        box-shadow: 0 10px 30px rgba(20, 83, 45, 0.18);
+    }
+
+    .account-login-story-main {
+        margin: auto 0;
+    }
+
+    .account-login-story__eyebrow {
+        display: inline-flex;
+        margin-bottom: 14px;
+        padding: 0.45rem 0.85rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.12);
+        color: #d8f7e3;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .account-login-story h1 {
+        margin: 0;
+        color: #ffffff;
+        font-size: clamp(36px, 4vw, 54px);
+        font-weight: 800;
+        line-height: 1.08;
+        max-width: 13ch;
+    }
+
+    .account-login-story p {
+        max-width: 540px;
+        margin: 20px 0 0;
+        color: rgba(255, 255, 255, 0.76);
+        font-size: 15px;
+        line-height: 1.75;
+    }
+
+    .account-login-panels {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 32px;
+    }
+
+    .account-login-panel {
+        padding: 16px 18px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .account-login-panel strong {
+        display: block;
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .account-login-panel span {
+        display: block;
+        margin-top: 8px;
+        color: rgba(255, 255, 255, 0.72);
+        line-height: 1.65;
+    }
+
+    .account-login-workflow {
+        margin-top: 18px;
+        padding: 0;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+        overflow: hidden;
+    }
+
+    .account-login-workflow h3 {
+        margin: 0;
+        padding: 16px 18px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+        color: #ffffff;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    .account-login-workflow ul {
+        display: grid;
+        gap: 0;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .account-login-workflow li {
+        display: grid;
+        grid-template-columns: 150px 1fr;
+        gap: 18px;
+        align-items: center;
+        padding: 14px 18px;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        color: rgba(255, 255, 255, 0.72);
+        line-height: 1.5;
+    }
+
+    .account-login-workflow b {
+        color: #d8f7e3;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .account-login-card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 48px 42px;
+        border: 0;
+        border-radius: 0;
+        background: rgba(255, 255, 255, 0.96);
+    }
+
+    .account-login-mobile-brand {
+        display: none;
+    }
+
+    .account-login-card::before {
+        display: none;
+    }
+
+    .account-login-card__header {
+        margin-bottom: 24px;
+    }
+
+    .account-login-card__header h2 {
+        margin: 0;
+        color: #14532d;
+        font-size: 30px;
+        font-weight: 800;
+    }
+
+    .account-login-card__header p {
+        margin: 12px 0 0;
+        color: #5f7567;
+        line-height: 1.7;
+    }
+
+    .account-login-card__meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 22px;
+        padding: 14px 16px;
+        border: 1px solid rgba(20, 83, 45, 0.12);
+        border-radius: 18px;
+        background: #e8f6ee;
+    }
+
+    .account-login-card__meta strong {
+        display: block;
+        color: #14532d;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .account-login-card__meta span {
+        display: block;
+        margin-top: 3px;
+        color: #5f7567;
+        font-size: 13px;
+    }
+
+    .account-login-card__badge {
+        flex-shrink: 0;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: #14532d;
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .account-login-form .form-group {
+        margin-bottom: 18px;
+    }
+
+    .account-login-form label {
+        display: block;
+        margin-bottom: 8px;
+        color: #173027;
+        font-weight: 600;
+    }
+
+    .account-login-form .form-control,
+    .account-login-form input.form-control,
+    .account-login-form textarea.form-control {
+        width: 100% !important;
+        max-width: none !important;
+        height: 54px;
+        border: 1px solid rgba(20, 83, 45, 0.14);
+        border-radius: 18px;
+        background: #ffffff !important;
+        color: #173027 !important;
+        -webkit-text-fill-color: #173027 !important;
+        caret-color: #1f7a4d !important;
+        box-shadow: 0 10px 30px rgba(20, 83, 45, 0.08) !important;
+    }
+
+    .account-login-form .form-control::placeholder {
+        color: #7b8f86 !important;
+        -webkit-text-fill-color: #7b8f86 !important;
+        opacity: 1 !important;
+    }
+
+    .account-login-form .form-control::selection {
+        background: rgba(17, 130, 78, 0.22) !important;
+        color: #163127 !important;
+        -webkit-text-fill-color: #163127 !important;
+    }
+
+    .account-login-form .form-control:-webkit-autofill,
+    .account-login-form .form-control:-webkit-autofill:hover,
+    .account-login-form .form-control:-webkit-autofill:focus {
+        -webkit-text-fill-color: #163127 !important;
+        box-shadow: 0 0 0 1000px #ffffff inset !important;
+        transition: background-color 5000s ease-in-out 0s;
+    }
+
+    .account-login-form .form-control:focus {
+        border-color: #1f7a4d !important;
+        color: #173027 !important;
+        -webkit-text-fill-color: #173027 !important;
+        box-shadow: 0 0 0 4px rgba(31, 122, 77, 0.12), 0 10px 30px rgba(20, 83, 45, 0.08) !important;
+    }
+
+    .account-login-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-top: 2px;
+    }
+
+    .account-login-row .checkbox {
+        margin: 0;
+        color: #5b756a;
+    }
+
+    .account-login-row .checkbox label {
+        margin: 0;
+        font-weight: 500;
+    }
+
+    .account-login-submit {
+        width: 100%;
+        height: 54px;
+        margin-top: 18px;
+        border: 0;
+        border-radius: 18px;
+        background: linear-gradient(135deg, #1f7a4d 0%, #0f6c3e 100%);
+        box-shadow: 0 10px 30px rgba(20, 83, 45, 0.16);
+        font-size: 15px;
+        font-weight: 800;
+    }
+
+    .account-login-submit:hover,
+    .account-login-submit:focus {
+        background: linear-gradient(135deg, #2f8f62 0%, #0f6c3e 100%);
+        color: #ffffff;
+    }
+
+    .account-login-support {
+        margin-top: 18px;
+        text-align: center;
+    }
+
+    .account-login-support a {
+        color: #0d6c40;
+        font-weight: 600;
+    }
+
+    @@media (max-width: 991px) {
+        .account-login-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .account-login-story {
+            padding-right: 0;
+        }
+
+        .account-login-story h1 {
+            max-width: none;
+        }
+    }
+
+    @@media (max-width: 767px) {
+        .account-login-stage {
+            min-height: 100vh;
+            padding: 18px 14px;
+            align-items: center;
+        }
+
+        .account-login-layout {
+            min-height: 0;
+            border-radius: 20px;
+            box-shadow: 0 18px 42px rgba(20, 83, 45, 0.12);
+        }
+
+        .account-login-story {
+            display: none;
+        }
+
+        .account-login-card {
+            padding: 34px 22px 28px;
+        }
+
+        .account-login-mobile-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding: 12px;
+            border: 1px solid rgba(20, 83, 45, 0.12);
+            border-radius: 18px;
+            background: #e8f6ee;
+            color: #14532d;
+            font-weight: 800;
+        }
+
+        .account-login-mobile-brand img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            border-radius: 14px;
+            background: #ffffff;
+            box-shadow: 0 10px 24px rgba(20, 83, 45, 0.12);
+        }
+
+        .account-login-mobile-brand small {
+            display: block;
+            margin-top: 2px;
+            color: #5f7567;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .account-login-card__header {
+            margin-bottom: 18px;
+        }
+
+        .account-login-card__header h2 {
+            font-size: 26px;
+        }
+
+        .account-login-card__header p {
+            font-size: 14px;
+            line-height: 1.55;
+        }
+
+        .account-login-card__meta {
+            display: none;
+        }
+
+        .account-login-form .form-control,
+        .account-login-form input.form-control,
+        .account-login-form textarea.form-control,
+        .account-login-submit {
+            height: 52px;
+            border-radius: 16px;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var bodyContent = document.querySelector('main.body-content');
+        if (bodyContent) {
+            bodyContent.classList.add('account-login-shell');
+        }
+    });
+</script>
+
+<div class="account-login-stage">
+    <div class="account-login-layout">
+        <section class="account-login-story">
+            <a href="~/" class="account-login-brand">
+                <img src="~/themes/CozaStore/images/icons/logo-01.png" alt="ECommerce">
+                <span>ECommerce</span>
+            </a>
+
+            <div class="account-login-story-main">
+                <span class="account-login-story__eyebrow">@Localizer["Admin console"]</span>
+                <h1>@Localizer["Sign in to manage operations"]</h1>
+                <p>@Localizer["Use this entry point for catalog maintenance, order handling, product documents, and dashboard monitoring. The storefront stays out of the way so the admin workflow starts cleanly."]</p>
+
+                <div class="account-login-panels">
+                    <div class="account-login-panel">
+                        <strong>@Localizer["Controlled access"]</strong>
+                        <span>@Localizer["Admin and vendor accounts land directly in the back-office workspace."]</span>
+                    </div>
+                    <div class="account-login-panel">
+                        <strong>@Localizer["Operational focus"]</strong>
+                        <span>@Localizer["Dashboard, orders, catalog, and documents are prioritized after sign-in."]</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="account-login-workflow">
+                <h3>@Localizer["Workspace scope"]</h3>
+                <ul>
+                    <li><b>@Localizer["Catalog"]</b><span>@Localizer["Products, variants, images, documents, and pricing."]</span></li>
+                    <li><b>@Localizer["Orders"]</b><span>@Localizer["Review activity and move into fulfillment tasks."]</span></li>
+                    <li><b>@Localizer["Dashboard"]</b><span>@Localizer["Start every session at the admin overview."]</span></li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="account-login-card">
+            <div class="account-login-mobile-brand">
+                <img src="~/themes/CozaStore/images/icons/logo-01.png" alt="ECommerce">
+                <span>
+                    ECommerce
+                    <small>@Localizer["Admin console"]</small>
+                </span>
+            </div>
+            <div class="account-login-card__header">
+                <h2>@Localizer["Admin login"]</h2>
+                <p>@Localizer["Enter your credentials to continue to the dashboard."]</p>
+            </div>
+
+            <div class="account-login-card__meta">
+                <div>
+                    <strong>@Localizer["Dashboard first"]</strong>
+                    <span>@Localizer["Successful sign-in opens the admin dashboard."]</span>
+                </div>
+                <span class="account-login-card__badge">@Localizer["Secure"]</span>
+            </div>
+
+            <form class="account-login-form"
+                  asp-area="Core"
+                  asp-controller="Account"
+                  asp-action="Login"
+                  asp-route-returnurl="@ViewData["ReturnUrl"]"
+                  method="post">
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="Email">@Localizer["Email"]</label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Password">@Localizer["Password"]</label>
+                    <input asp-for="Password" class="form-control" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <div class="account-login-row">
+                    <div class="checkbox">
+                        <label asp-for="RememberMe">
+                            <input asp-for="RememberMe" />
+                            @Localizer["Remember me?"]
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary account-login-submit">@Localizer["Log in"]</button>
+
+                <div class="account-login-support">
+                    <a asp-action="ForgotPassword">@Localizer["Forgot your password?"]</a>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+
+@section scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
